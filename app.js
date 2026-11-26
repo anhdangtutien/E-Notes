@@ -17,56 +17,78 @@ const state = {
 
 let useLocalStore = false;
 
-// Seed data for standalone/Vercel mode with complete core curriculum
+// Seed data for standalone/Vercel mode with complete core curriculum (12 Tenses + Rel Clauses + Pronunciation + Linking)
 const SEED_DATA = {
   sessions: [
     {
       id: 1,
       session_number: 1,
-      title: "Buổi 1: Hệ thống các thì cốt lõi (Hiện tại, Quá khứ, Tương lai)",
+      title: "Buổi 1: Hệ thống 4 thì Hiện tại (Present Simple, Continuous, Perfect, Perfect Continuous)",
       date: new Date().toISOString().split('T')[0],
       teacher: "Mr. David Miller",
-      goals: "Nắm vững bản chất và cách phối hợp các thì Hiện tại, Quá khứ, Tương lai trong văn phong học thuật & giao tiếp.",
-      notes: "Chú ý phân biệt rõ mốc thời gian xác định (Past Simple) và hành động kéo dài đến nay (Present Perfect).",
+      goals: "Làm chủ trọn vẹn bản chất, công thức và ngữ cảnh sử dụng của cả 4 thì Hiện tại trong tiếng Anh chuẩn quốc tế.",
+      notes: "Phân biệt rõ: Hiện tại đơn (thói quen, chân lý) vs Tiếp diễn (tại thời điểm nói) vs Hoàn thành (kết quả đến nay) vs Hoàn thành tiếp diễn (quá trình liên tục).",
       created_at: "2026-11-25 08:00:00",
       updated_at: "2026-11-25 08:00:00"
     },
     {
       id: 2,
       session_number: 2,
-      title: "Buổi 2: Mệnh đề quan hệ & Rút gọn mệnh đề (Relative Clauses)",
+      title: "Buổi 2: Hệ thống 4 thì Quá khứ (Past Simple, Continuous, Perfect, Perfect Continuous)",
       date: new Date().toISOString().split('T')[0],
       teacher: "Ms. Sarah Jenkins",
-      goals: "Thành thạo đại từ/trạng từ quan hệ (Who, Whom, Which, That, Whose, Where...) và 3 quy tắc rút gọn mệnh đề đỉnh cao.",
-      notes: "Tuyệt đối không dùng 'That' sau dấu phẩy (mệnh đề không xác định) và sau giới từ.",
+      goals: "Nắm vững trục thời gian quá khứ: Quá khứ đơn, Quá khứ tiếp diễn, Quá khứ hoàn thành và Quá khứ hoàn thành tiếp diễn.",
+      notes: "Quy tắc vàng: Hành động xảy ra trước một hành động khác trong quá khứ BẮT BUỘC dùng Quá khứ hoàn thành (Past Perfect).",
       created_at: "2026-11-25 09:00:00",
       updated_at: "2026-11-25 09:00:00"
     },
     {
       id: 3,
       session_number: 3,
-      title: "Buổi 3: Quy tắc phát âm đuôi -ED chuẩn quốc tế (/id/, /t/, /d/)",
+      title: "Buổi 3: Hệ thống 4 thì Tương lai (Future Simple, Continuous, Perfect, Perfect Continuous)",
       date: new Date().toISOString().split('T')[0],
       teacher: "Dr. Alexander Hayes",
-      goals: "Nắm trọn vẹn 3 quy tắc phát âm đuôi -ED theo ngữ âm học quốc tế và danh sách tính từ ngoại lệ.",
-      notes: "Ghi nhớ câu thần chú âm vô thanh: 'Chính Phủ Phát Sách Không Thèm / Thảo' để đọc đuôi /t/ chuẩn xác.",
+      goals: "Thành thạo Will, Be going to, Tương lai tiếp diễn, Tương lai hoàn thành và Tương lai hoàn thành tiếp diễn.",
+      notes: "Trong mệnh đề thời gian (when, as soon as, before, by the time), động từ chia ở Hiện tại đơn thay vì dùng Will.",
       created_at: "2026-11-25 10:00:00",
       updated_at: "2026-11-25 10:00:00"
     },
     {
       id: 4,
       session_number: 4,
-      title: "Buổi 4: Quy tắc đọc nối đuôi & Nói chuẩn ngữ điệu (Connected Speech)",
+      title: "Buổi 4: Mệnh đề quan hệ & Rút gọn mệnh đề (Relative Clauses)",
+      date: new Date().toISOString().split('T')[0],
+      teacher: "Prof. Arthur Pendelton",
+      goals: "Thành thạo đại từ/trạng từ quan hệ (Who, Whom, Which, That, Whose, Where...) và 3 quy tắc rút gọn mệnh đề đỉnh cao.",
+      notes: "Tuyệt đối không dùng 'That' sau dấu phẩy (mệnh đề không xác định) và sau giới từ.",
+      created_at: "2026-11-25 11:00:00",
+      updated_at: "2026-11-25 11:00:00"
+    },
+    {
+      id: 5,
+      session_number: 5,
+      title: "Buổi 5: Quy tắc phát âm đuôi -ED chuẩn quốc tế (/id/, /t/, /d/)",
+      date: new Date().toISOString().split('T')[0],
+      teacher: "Dr. Rachel Green",
+      goals: "Nắm trọn vẹn 3 quy tắc phát âm đuôi -ED theo ngữ âm học quốc tế và danh sách tính từ ngoại lệ.",
+      notes: "Ghi nhớ câu thần chú âm vô thanh: 'Chính Phủ Phát Sách Không Thèm / Thảo' để đọc đuôi /t/ chuẩn xác.",
+      created_at: "2026-11-25 12:00:00",
+      updated_at: "2026-11-25 12:00:00"
+    },
+    {
+      id: 6,
+      session_number: 6,
+      title: "Buổi 6: Quy tắc đọc nối đuôi & Nói chuẩn ngữ điệu (Connected Speech)",
       date: new Date().toISOString().split('T')[0],
       teacher: "Coach Emma Watson",
       goals: "Làm chủ 4 quy tắc nối âm: Phụ âm - Nguyên âm, Nguyên âm - Nguyên âm, Biến âm (Assimilation) và Nuốt âm (Elision).",
       notes: "Luyện phát âm theo cụm luồng hơi liền mạch thay vì ngắt từng từ đơn lẻ.",
-      created_at: "2026-11-25 11:00:00",
-      updated_at: "2026-11-25 11:00:00"
+      created_at: "2026-11-25 13:00:00",
+      updated_at: "2026-11-25 13:00:00"
     }
   ],
   vocabularies: [
-    // Buổi 1
+    // Buổi 1: Hiện tại
     {
       id: 1,
       session_id: 1,
@@ -106,10 +128,93 @@ const SEED_DATA = {
       notes: "Noun form: procrastination",
       created_at: "2026-11-25 08:20:00"
     },
-    // Buổi 2
+
+    // Buổi 2: Quá khứ
     {
       id: 4,
       session_id: 2,
+      word: "chronological",
+      ipa: "/ˌkrɑːnəˈlɑːdʒɪkl/",
+      pos: "adjective",
+      meaning: "theo thứ tự thời gian, niên đại",
+      example_en: "The historical events are listed in chronological order.",
+      example_vi: "Các sự kiện lịch sử được liệt kê theo đúng thứ tự thời gian.",
+      status: "mastered",
+      notes: "Collocation: in chronological order",
+      created_at: "2026-11-25 09:10:00"
+    },
+    {
+      id: 5,
+      session_id: 2,
+      word: "retrospect",
+      ipa: "/ˈretrəspekt/",
+      pos: "noun",
+      meaning: "sự nhìn lại dĩ vãng, hồi tưởng",
+      example_en: "In retrospect, that challenging decision was the turning point.",
+      example_vi: "Nhìn lại quá khứ, quyết định đầy thử thách đó chính là bước ngoặt.",
+      status: "reviewing",
+      notes: "Idiom: In retrospect (= nhìn lại quá khứ)",
+      created_at: "2026-11-25 09:15:00"
+    },
+    {
+      id: 6,
+      session_id: 2,
+      word: "unprecedented",
+      ipa: "/ʌnˈpresɪdentɪd/",
+      pos: "adjective",
+      meaning: "chưa từng có tiền lệ, vô tiền khoáng hậu",
+      example_en: "The economy experienced an unprecedented level of growth.",
+      example_vi: "Nền kinh tế đã trải qua mức tăng trưởng chưa từng có tiền lệ.",
+      status: "learning",
+      notes: "Academic IELTS Reading & Writing vocabulary",
+      created_at: "2026-11-25 09:20:00"
+    },
+
+    // Buổi 3: Tương lai
+    {
+      id: 7,
+      session_id: 3,
+      word: "anticipate",
+      ipa: "/ænˈtɪsɪpeɪt/",
+      pos: "verb",
+      meaning: "lường trước, dự đoán trước",
+      example_en: "We anticipate that artificial intelligence will transform education.",
+      example_vi: "Chúng tôi lường trước rằng trí tuệ nhân tạo sẽ thay đổi nền giáo dục.",
+      status: "mastered",
+      notes: "Synonym: foresee, predict, expect",
+      created_at: "2026-11-25 10:10:00"
+    },
+    {
+      id: 8,
+      session_id: 3,
+      word: "feasible",
+      ipa: "/ˈfiːzəbl/",
+      pos: "adjective",
+      meaning: "khả thi, có thể thực hiện được",
+      example_en: "With disciplined execution, our futuristic goals are entirely feasible.",
+      example_vi: "Với việc thực thi có kỷ luật, các mục tiêu tương lai của chúng ta hoàn toàn khả thi.",
+      status: "learning",
+      notes: "Antonym: infeasible, impossible",
+      created_at: "2026-11-25 10:15:00"
+    },
+    {
+      id: 9,
+      session_id: 3,
+      word: "milestone",
+      ipa: "/ˈmaɪlstəʊn/",
+      pos: "noun",
+      meaning: "cột mốc quan trọng, dấu mốc lịch sử",
+      example_en: "Graduating from university will be a major milestone in your life.",
+      example_vi: "Tốt nghiệp đại học sẽ là một cột mốc trọng đại trong cuộc đời bạn.",
+      status: "mastered",
+      notes: "Collocation: reach / achieve a milestone",
+      created_at: "2026-11-25 10:20:00"
+    },
+
+    // Buổi 4: Mệnh đề quan hệ
+    {
+      id: 10,
+      session_id: 4,
       word: "comprehensive",
       ipa: "/ˌkɑːmprɪˈhensɪv/",
       pos: "adjective",
@@ -118,11 +223,11 @@ const SEED_DATA = {
       example_vi: "Nghiên cứu cung cấp một cái nhìn toàn diện về các mô hình khí hậu toàn cầu.",
       status: "mastered",
       notes: "Tránh nhầm với 'comprehensible' (dễ hiểu)",
-      created_at: "2026-11-25 09:10:00"
+      created_at: "2026-11-25 11:10:00"
     },
     {
-      id: 5,
-      session_id: 2,
+      id: 11,
+      session_id: 4,
       word: "indispensable",
       ipa: "/ˌɪndɪˈspensəbl/",
       pos: "adjective",
@@ -131,11 +236,11 @@ const SEED_DATA = {
       example_vi: "Tư duy phản biện là điều không thể thiếu cho thành công trong học tập.",
       status: "reviewing",
       notes: "Collocation: an indispensable tool / element",
-      created_at: "2026-11-25 09:15:00"
+      created_at: "2026-11-25 11:15:00"
     },
     {
-      id: 6,
-      session_id: 2,
+      id: 12,
+      session_id: 4,
       word: "facilitate",
       ipa: "/fəˈsɪlɪteɪt/",
       pos: "verb",
@@ -144,12 +249,13 @@ const SEED_DATA = {
       example_vi: "Các công cụ kỹ thuật số mới tạo điều kiện thuận lợi cho việc cộng tác giữa các đội nhóm từ xa.",
       status: "learning",
       notes: "Formal academic verb",
-      created_at: "2026-11-25 09:20:00"
+      created_at: "2026-11-25 11:20:00"
     },
-    // Buổi 3
+
+    // Buổi 5: Phát âm -ED
     {
-      id: 7,
-      session_id: 3,
+      id: 13,
+      session_id: 5,
       word: "articulate",
       ipa: "/ɑːrˈtɪkjuleɪt/",
       pos: "verb / adjective",
@@ -158,11 +264,11 @@ const SEED_DATA = {
       example_vi: "Cô ấy đã có một bài thuyết trình lưu loát và đầy sức thuyết phục ngày hôm qua.",
       status: "mastered",
       notes: "V: /ɑːrˈtɪkjuleɪt/ - Adj: /ɑːrˈtɪkjulət/",
-      created_at: "2026-11-25 10:10:00"
+      created_at: "2026-11-25 12:10:00"
     },
     {
-      id: 8,
-      session_id: 3,
+      id: 14,
+      session_id: 5,
       word: "distinguish",
       ipa: "/dɪˈstɪŋɡwɪʃ/",
       pos: "verb",
@@ -171,11 +277,11 @@ const SEED_DATA = {
       example_vi: "Bạn có thể phân biệt giữa phụ âm vô thanh và hữu thanh không?",
       status: "learning",
       notes: "Collocation: distinguish between A and B",
-      created_at: "2026-11-25 10:15:00"
+      created_at: "2026-11-25 12:15:00"
     },
     {
-      id: 9,
-      session_id: 3,
+      id: 15,
+      session_id: 5,
       word: "exception",
       ipa: "/ɪkˈsepʃn/",
       pos: "noun",
@@ -184,12 +290,13 @@ const SEED_DATA = {
       example_vi: "Các từ như 'naked' và 'wicked' là những ngoại lệ đặc biệt trong cách phát âm đuôi -ed.",
       status: "mastered",
       notes: "Idiom: With the exception of (= ngoại trừ)",
-      created_at: "2026-11-25 10:20:00"
+      created_at: "2026-11-25 12:20:00"
     },
-    // Buổi 4
+
+    // Buổi 6: Nối âm
     {
-      id: 10,
-      session_id: 4,
+      id: 16,
+      session_id: 6,
       word: "fluency",
       ipa: "/ˈfluːənsi/",
       pos: "noun",
@@ -198,11 +305,11 @@ const SEED_DATA = {
       example_vi: "Việc nối âm đúng cách sẽ nâng cao đáng kể sự trôi chảy khi bạn nói.",
       status: "mastered",
       notes: "Adjective: fluent",
-      created_at: "2026-11-25 11:10:00"
+      created_at: "2026-11-25 13:10:00"
     },
     {
-      id: 11,
-      session_id: 4,
+      id: 17,
+      session_id: 6,
       word: "intonation",
       ipa: "/ˌɪntəˈneɪʃn/",
       pos: "noun",
@@ -211,135 +318,231 @@ const SEED_DATA = {
       example_vi: "Ngữ điệu tự nhiên giúp người nghe nắm bắt cảm xúc và chủ ý của bạn.",
       status: "reviewing",
       notes: "Rising intonation (câu hỏi Yes/No) vs Falling intonation (câu trần thuật)",
-      created_at: "2026-11-25 11:15:00"
+      created_at: "2026-11-25 13:15:00"
     },
     {
-      id: 12,
-      session_id: 4,
+      id: 18,
+      session_id: 6,
       word: "spontaneous",
       ipa: "/spɑːnˈteɪniəs/",
       pos: "adjective",
-      meaning: "tự nhiên, bộc phát tự phát",
+      meaning: "tự nhiên, bộc phát không cần chuẩn bị trước",
       example_en: "Daily practice makes your conversational responses more spontaneous.",
       example_vi: "Việc luyện tập mỗi ngày giúp phản xạ giao tiếp của bạn trở nên tự nhiên hơn.",
       status: "learning",
       notes: "Adverb: spontaneously",
-      created_at: "2026-11-25 11:20:00"
+      created_at: "2026-11-25 13:20:00"
     }
   ],
   grammars: [
-    // Buổi 1: Hiện tại, Quá khứ, Tương lai
+    // ==========================================
+    // BUỔI 1: HỆ THỐNG 4 THÌ HIỆN TẠI (PRESENT TENSES)
+    // ==========================================
     {
       id: 1,
       session_id: 1,
-      title: "1. Các thì Hiện tại (Present Simple & Present Continuous)",
-      structure: "Hiện tại đơn: S + V(s/es) | Hiện tại tiếp diễn: S + am/is/are + V-ing",
-      explanation: "- Hiện tại đơn: Diễn tả chân lý khoa học, sự thật hiển nhiên, thói quen lặp lại thường xuyên (always, usually, every day).\n- Hiện tại tiếp diễn: Diễn tả hành động đang xảy ra tại lúc nói (now, at the moment, look!) hoặc kế hoạch chắc chắn trong tương lai gần.",
-      examples: "+ He usually drives to work, but this week he is taking the subway.\n- Water does not boil at 50 degrees Celsius.\n? Are you working on any special assignment right now?",
-      tips: "Động từ trạng thái (Stative verbs: know, believe, understand, love, hate, want, belong...) KHÔNG chia ở dạng tiếp diễn (-ing).",
+      title: "1. Thì Hiện tại đơn (Present Simple Tense)",
+      structure: "(+) S + V(s/es) | (-) S + do/does not + V_inf | (?) Do/Does + S + V_inf?\nVới To-be: (+) S + am/is/are | (-) S + am/is/are not | (?) Am/Is/Are + S...?",
+      explanation: "Dùng để diễn tả:\n1. Chân lý khoa học, sự thật hiển nhiên (Water boils at 100°C).\n2. Thói quen, hành động lặp đi lặp lại thường xuyên (I brush my teeth twice a day).\n3. Lịch trình tàu xe, máy bay, thời khóa biểu cố định (The train departs at 6:00 PM).\n4. Dấu hiệu nhận biết: always, usually, often, sometimes, seldom, never, every day/week, once a year...",
+      examples: "+ Water boils at 100 degrees Celsius under standard atmospheric pressure.\n- He does not drink coffee in the evening because it disrupts his sleep.\n? Do you practice English pronunciation on a daily basis?",
+      tips: "Thêm 'es' khi động từ tận cùng bằng: -o, -s, -z, -ch, -x, -sh (Mẹo nhớ: 'Ông Sáu Chạy Xe SH').\nVí dụ: watch ➡️ watches, fix ➡️ fixes, go ➡️ goes.",
       created_at: "2026-11-25 08:30:00"
     },
     {
       id: 2,
       session_id: 1,
-      title: "2. Các thì Quá khứ (Past Simple & Past Continuous)",
-      structure: "Quá khứ đơn: S + V2/ed | Quá khứ tiếp diễn: S + was/were + V-ing",
-      explanation: "- Quá khứ đơn: Hành động đã bắt đầu và kết thúc trọn vẹn trong quá khứ có mốc thời gian rõ ràng (yesterday, last week, in 2020).\n- Quá khứ tiếp diễn: Hành động đang xảy ra tại một thời điểm quá khứ (at 8 PM last night) hoặc hành động dài đang diễn ra thì hành động ngắn cắt ngang.",
-      examples: "+ I was walking home yesterday when it suddenly started to pour rain.\n- They did not participate in the symposium last month.\n? What were you doing when the emergency siren went off?",
-      tips: "Phối hợp: 'When + Quá khứ đơn (hành động ngắn cắt ngang), Quá khứ tiếp diễn (hành động dài đang xảy ra)'.",
+      title: "2. Thì Hiện tại tiếp diễn (Present Continuous Tense)",
+      structure: "(+) S + am/is/are + V-ing | (-) S + am/is/are not + V-ing | (?) Am/Is/Are + S + V-ing?",
+      explanation: "Dùng để diễn tả:\n1. Hành động đang diễn ra ngay tại thời điểm nói (now, right now, at the moment, Look!, Listen!).\n2. Hành động đang xảy ra xung quanh thời điểm nói dù không nhất thiết ngay lúc này (I am reading an inspiring book).\n3. Kế hoạch hoặc lịch hẹn chắc chắn trong tương lai gần (We are meeting the CEO tomorrow morning).\n4. Phàn nàn về một thói quen xấu lặp lại gây khó chịu với 'always' (He is always forgetting his room key!).",
+      examples: "+ Look! The children are playing joyfully in the freshly fallen snow.\n- She is not attending the lecture today because she feels under the weather.\n? Are you working on the final graduation thesis right now?",
+      tips: "TUYỆT ĐỐI KHÔNG dùng thì tiếp diễn với động từ trạng thái/cảm xúc (Stative verbs): know, believe, understand, love, hate, want, like, belong, smell, taste...",
       created_at: "2026-11-25 08:35:00"
     },
     {
       id: 3,
       session_id: 1,
-      title: "3. Hiện tại hoàn thành (Present Perfect)",
-      structure: "Công thức: S + have/has + V3/ed (Phủ định: have/has not + V3/ed)",
-      explanation: "Diễn tả hành động xảy ra trong quá khứ và vẫn kéo dài đến hiện tại, hoặc vừa mới xảy ra, hoặc kinh nghiệm trải nghiệm từ trước đến nay (dấu hiệu: already, yet, just, ever, never, since + mốc, for + khoảng).",
-      examples: "+ She has worked as a software engineer for six years.\n- We haven't deployed the production build yet.\n? Have you ever visited Singapore?",
-      tips: "Phân biệt: 'have gone to' (đã đi và chưa về) vs 'have been to' (đã từng đến và đã trở về).",
+      title: "3. Thì Hiện tại hoàn thành (Present Perfect Tense)",
+      structure: "(+) S + have/has + V3/ed | (-) S + haven't/hasn't + V3/ed | (?) Have/Has + S + V3/ed?",
+      explanation: "Dùng để diễn tả:\n1. Hành động bắt đầu trong quá khứ và vẫn còn kéo dài đến hiện tại (since + mốc thời gian, for + khoảng thời gian).\n2. Hành động vừa mới xảy ra xong (just, recently, lately).\n3. Hành động đã hoàn tất tính đến thời điểm hiện tại (already, yet trong câu phủ định/nghi vấn).\n4. Trải nghiệm, kinh nghiệm từ trước tới nay (ever, never, so far, up to now).\n5. Nói về số lần đã làm gì đó (This is the first/second time...).",
+      examples: "+ She has worked as a senior software architect for more than eight years.\n- The research committee has not published the official findings yet.\n? Have you ever visited any English-speaking countries before?",
+      tips: "Phân biệt cốt lõi:\n- 'Have gone to': Đã đi đến nơi nào đó và hiện CHƯA VỀ.\n- 'Have been to': Đã từng đến nơi đó và HIỆN ĐÃ TRỞ VỀ.",
       created_at: "2026-11-25 08:40:00"
     },
     {
       id: 4,
       session_id: 1,
-      title: "4. Các thì Tương lai (Future: Will vs Be Going To vs Future Perfect)",
-      structure: "Will: S + will + V | Be going to: S + am/is/are going to + V | Tương lai hoàn thành: S + will have + V3/ed",
-      explanation: "- Will: Quyết định bộc phát tại thời điểm nói, lời hứa, dự đoán chủ quan.\n- Be going to: Kế hoạch đã định từ trước, hoặc dự đoán dựa trên bằng chứng trước mắt (Look at the dark clouds! It's going to rain).\n- Tương lai hoàn thành: Hành động sẽ hoàn thành TRƯỚC một mốc thời gian trong tương lai (By next week, By the time...).",
-      examples: "+ By the end of this month, our team will have finished the entire project.\n+ Don't worry, I will give you a hand with those luggage.\n- Look at the timetable, the flight isn't going to take off on time.",
-      tips: "Mệnh đề thời gian bắt đầu bằng (when, as soon as, until, before, after) ở tương lai PHẢI chia ở Hiện tại đơn, KHÔNG dùng 'will'.",
+      title: "4. Thì Hiện tại hoàn thành tiếp diễn (Present Perfect Continuous Tense)",
+      structure: "(+) S + have/has been + V-ing | (-) S + haven't/hasn't been + V-ing | (?) Have/Has + S + been + V-ing?",
+      explanation: "Dùng để diễn tả:\n1. Nhấn mạnh TÍNH LIÊN TỤC và KÉO DÀI của hành động bắt đầu từ quá khứ và vẫn đang tiếp diễn ở hiện tại.\n2. Hành động vừa mới kết thúc nhưng để lại KẾT QUẢ/HẬU QUẢ rõ rệt ngay tại hiện tại.\n3. Dấu hiệu nhận biết: all day, all morning, for hours, since early morning, how long...",
+      examples: "+ It has been raining non-stop for four hours and the roads are completely flooded.\n- He hasn't been sleeping well lately due to intense project deadlines.\n? How long have you been learning English through this application?",
+      tips: "Phân biệt với Present Perfect:\n- Present Perfect nhấn mạnh KẾT QUẢ/SỐ LƯỢNG: 'I have read 5 chapters'.\n- Present Perfect Continuous nhấn mạnh QUÁ TRÌNH/THỜI GIAN: 'I have been reading for 3 hours'.",
       created_at: "2026-11-25 08:45:00"
     },
 
-    // Buổi 2: Mệnh đề quan hệ
+    // ==========================================
+    // BUỔI 2: HỆ THỐNG 4 THÌ QUÁ KHỨ (PAST TENSES)
+    // ==========================================
     {
       id: 5,
       session_id: 2,
-      title: "1. Đại từ & Trạng từ quan hệ (Who, Whom, Which, That, Whose...)",
-      structure: "Người: WHO + V / WHOM + S + V | Vật: WHICH/THAT + V/S+V | Sở hữu: N + WHOSE + N | Trạng từ: WHERE, WHEN, WHY",
-      explanation: "Dùng để nối 2 câu đơn thành câu phức gãy gọn. Phân biệt:\n- Mệnh đề xác định (Defining): Không có dấu phẩy, bắt buộc phải có để câu rõ nghĩa, dùng được 'that'.\n- Mệnh đề không xác định (Non-defining): Có dấu phẩy phân tách, chỉ bổ sung thông tin cho danh từ đã rõ ràng (tên riêng, có this/that/my...).",
-      examples: "+ The engineer who developed this application received the award.\n+ Dr. Harrison, whom we interviewed yesterday, has accepted the position.\n+ The company whose headquarters is in Tokyo announced a new strategy.",
-      tips: "LUẬT VÀNG: Sau dấu phẩy và sau giới từ (in, on, with...) TUYỆT ĐỐI KHÔNG BAO GIỜ dùng 'THAT'.",
+      title: "1. Thì Quá khứ đơn (Past Simple Tense)",
+      structure: "(+) S + V2/ed | (-) S + did not (didn't) + V_inf | (?) Did + S + V_inf?\nVới To-be: (+) S + was/were | (-) S + was/were not | (?) Was/Were + S...?",
+      explanation: "Dùng để diễn tả:\n1. Hành động đã bắt đầu và kết thúc trọn vẹn trong quá khứ, có mốc thời gian xác định rõ ràng.\n2. Chuỗi các hành động xảy ra kế tiếp nhau trong quá khứ (He locked the door, turned off the lights, and left).\n3. Dấu hiệu nhận biết: yesterday, last week/month/year, in 2020, ago, when I was a child...",
+      examples: "+ Our engineering team launched the production application three weeks ago.\n- She didn't participate in the symposium yesterday due to a prior commitment.\n? Did you receive the feedback document from Professor Miller?",
+      tips: "Khi đã mượn trợ động từ 'DID' trong câu phủ định hoặc nghi vấn, động từ chính BẮT BUỘC trở về dạng NGUYÊN THỂ (V_inf).",
       created_at: "2026-11-25 09:30:00"
     },
     {
       id: 6,
       session_id: 2,
-      title: "2. Rút gọn mệnh đề quan hệ (Reduced Relative Clauses)",
+      title: "2. Thì Quá khứ tiếp diễn (Past Continuous Tense)",
+      structure: "(+) S + was/were + V-ing | (-) S + wasn't/weren't + V-ing | (?) Was/Were + S + V-ing?",
+      explanation: "Dùng để diễn tả:\n1. Hành động đang xảy ra tại một thời điểm chính xác trong quá khứ (at 8 PM yesterday, at this time last week).\n2. Hai hay nhiều hành động diễn ra đồng thời song song trong quá khứ (kết hợp với 'While').\n3. Một hành động dài đang diễn ra trong quá khứ thì một hành động ngắn bất chợt xen vào.",
+      examples: "+ At 9 PM last night, I was reviewing my vocabulary flashcards for the final exam.\n+ While the teacher was explaining the grammar rules, the students were taking notes.\n? What were you doing when the emergency power outage occurred?",
+      tips: "Công thức phối thì kinh điển:\n- When + Quá khứ đơn (hành động ngắn cắt ngang), Quá khứ tiếp diễn (hành động dài đang xảy ra).\n- While + Quá khứ tiếp diễn, Quá khứ đơn.",
+      created_at: "2026-11-25 09:35:00"
+    },
+    {
+      id: 7,
+      session_id: 2,
+      title: "3. Thì Quá khứ hoàn thành (Past Perfect Tense)",
+      structure: "(+) S + had + V3/ed | (-) S + had not (hadn't) + V3/ed | (?) Had + S + V3/ed?",
+      explanation: "Dùng để diễn tả:\n1. Hành động đã xảy ra và hoàn tất TRƯỚC một hành động khác trong quá khứ (Hành động trước: Past Perfect; Hành động sau: Past Simple).\n2. Hành động xảy ra trước một mốc thời gian xác định trong quá khứ.\n3. Dấu hiệu nhận biết: by the time, before, after, by 2015, until then...",
+      examples: "+ By the time the rescue team arrived at the summit, the storm had already passed.\n+ After she had completed her master's thesis, she travelled around Europe.\n? Had you ever studied computer science before you joined this university?",
+      tips: "Công thức vàng dễ thuộc:\n- By the time / Before + Quá khứ đơn, Quá khứ hoàn thành.\n- After + Quá khứ hoàn thành, Quá khứ đơn.",
+      created_at: "2026-11-25 09:40:00"
+    },
+    {
+      id: 8,
+      session_id: 2,
+      title: "4. Thì Quá khứ hoàn thành tiếp diễn (Past Perfect Continuous Tense)",
+      structure: "(+) S + had been + V-ing | (-) S + hadn't been + V-ing | (?) Had + S + been + V-ing?",
+      explanation: "Dùng để diễn tả:\n1. Nhấn mạnh TÍNH LIÊN TỤC và KÉO DÀI của một hành động xảy ra trước một thời điểm hoặc một hành động khác trong quá khứ.\n2. Chỉ nguyên nhân trực tiếp cho một trạng thái/kết quả trong quá khứ (He was exhausted because he had been driving for 8 hours).",
+      examples: "+ When the train finally arrived, passengers had been waiting on the platform for two hours.\n+ Her eyes were strained because she had been staring at the monitor all morning.\n? How long had they been negotiating before they officially signed the contract?",
+      tips: "Khi câu muốn nhấn mạnh 'khoảng thời gian bao lâu' (for hours, for 5 years) trước một mốc quá khứ, hãy ưu tiên dùng Quá khứ hoàn thành tiếp diễn.",
+      created_at: "2026-11-25 09:45:00"
+    },
+
+    // ==========================================
+    // BUỔI 3: HỆ THỐNG 4 THÌ TƯƠNG LAI (FUTURE TENSES)
+    // ==========================================
+    {
+      id: 9,
+      session_id: 3,
+      title: "1. Thì Tương lai đơn (Future Simple) & Be Going To",
+      structure: "Will: (+) S + will + V_inf | (-) S + won't + V_inf | (?) Will + S + V_inf?\nBe going to: (+) S + am/is/are going to + V_inf | (-) S + am/is/are not going to + V_inf",
+      explanation: "Phân biệt bản chất 2 cấu trúc tương lai phổ biến nhất:\n1. Will: Quyết định bộc phát ngay tại thời điểm nói (không có dự định trước), lời hứa, đề nghị giúp đỡ, dự đoán chủ quan cảm tính.\n2. Be going to: Dự định, kế hoạch đã được tính toán từ trước khi nói, hoặc dự đoán dựa trên BẰNG CHỨNG RÕ RÀNG trước mắt (Look at the dark clouds!).",
+      examples: "+ Look at those black clouds! It is going to rain very heavily.\n+ Don't worry about the heavy suitcases, I will give you a hand.\n- We are not going to deploy the update until all unit tests pass completely.",
+      tips: "LUẬT BẤT THÀNH VĂN: Trong mệnh đề trạng ngữ chỉ thời gian (bắt đầu bằng When, As soon as, Before, After, Until) ở tương lai, động từ PHẢI chia ở Hiện tại đơn, KHÔNG dùng 'will'.",
+      created_at: "2026-11-25 10:30:00"
+    },
+    {
+      id: 10,
+      session_id: 3,
+      title: "2. Thì Tương lai tiếp diễn (Future Continuous Tense)",
+      structure: "(+) S + will be + V-ing | (-) S + won't be + V-ing | (?) Will + S + be + V-ing?",
+      explanation: "Dùng để diễn tả:\n1. Hành động đang diễn ra tại một thời điểm cụ thể xác định trong tương lai (at 9 AM tomorrow, this time next week).\n2. Hành động đang xảy ra trong tương lai thì có một hành động khác xen vào (mệnh đề xen vào chia Hiện tại đơn).\n3. Hành động diễn ra như một phần trong lịch trình thông thường không thể tránh khỏi.",
+      examples: "+ This time next Monday, I will be flying across the Pacific to San Francisco.\n+ When you arrive at the station tomorrow, our representative will be waiting for you.\n? Will you be using the laboratory computer tomorrow morning?",
+      tips: "Dấu hiệu nhận biết đặc trưng: 'At this time tomorrow', 'At 8 o'clock tonight', 'At this moment next year'...",
+      created_at: "2026-11-25 10:35:00"
+    },
+    {
+      id: 11,
+      session_id: 3,
+      title: "3. Thì Tương lai hoàn thành (Future Perfect Tense)",
+      structure: "(+) S + will have + V3/ed | (-) S + won't have + V3/ed | (?) Will + S + have + V3/ed?",
+      explanation: "Dùng để diễn tả:\n1. Hành động sẽ được hoàn tất TRƯỚC một mốc thời gian hoặc trước một hành động khác trong tương lai.\n2. Dấu hiệu nhận biết: By + mốc tương lai (By next month, By 2030), By the time + mệnh đề hiện tại đơn, Before + mốc tương lai.",
+      examples: "+ By the end of this semester, we will have completed all core coursework.\n+ By the time you get home tonight, dinner will have been prepared.\n? Will you have submitted your final application before the deadline expires?",
+      tips: "Công thức vàng trong bài thi TOEIC & IELTS:\n'By the time + S + V(hiện tại đơn), S + will have + V3/ed'.",
+      created_at: "2026-11-25 10:40:00"
+    },
+    {
+      id: 12,
+      session_id: 3,
+      title: "4. Thì Tương lai hoàn thành tiếp diễn (Future Perfect Continuous Tense)",
+      structure: "(+) S + will have been + V-ing | (-) S + won't have been + V-ing | (?) Will + S + have been + V-ing?",
+      explanation: "Dùng để diễn tả:\n1. Nhấn mạnh khoảng thời gian kéo dài liên tục của một hành động tính tới một mốc thời điểm xác định trong tương lai.\n2. Dấu hiệu nhận biết: By the end of this year, for 10 years; By next month, for 3 years...",
+      examples: "+ By next October, Dr. Watson will have been lecturing at this institute for twenty years.\n+ By 8 PM tonight, they will have been coding continuously for twelve hours.\n? How long will you have been residing in this apartment by next summer?",
+      tips: "Thì này là 'vũ khí bí mật' giúp nâng cao band điểm Grammatical Range and Accuracy trong bài thi IELTS Writing Task 2 khi cần nhấn mạnh khoảng thời gian kéo dài liên tục.",
+      created_at: "2026-11-25 10:45:00"
+    },
+
+    // ==========================================
+    // BUỔI 4: MỆNH ĐỀ QUAN HỆ & RÚT GỌN (RELATIVE CLAUSES)
+    // ==========================================
+    {
+      id: 13,
+      session_id: 4,
+      title: "1. Đại từ & Trạng từ quan hệ (Who, Whom, Which, That, Whose...)",
+      structure: "Người: WHO + V / WHOM + S + V | Vật: WHICH/THAT + V/S+V | Sở hữu: N + WHOSE + N | Trạng từ: WHERE, WHEN, WHY",
+      explanation: "Dùng để nối 2 câu đơn thành câu phức gãy gọn. Phân biệt:\n- Mệnh đề xác định (Defining): Không có dấu phẩy, bắt buộc phải có để câu rõ nghĩa, dùng được 'that'.\n- Mệnh đề không xác định (Non-defining): Có dấu phẩy phân tách, chỉ bổ sung thông tin cho danh từ đã rõ ràng (tên riêng, có this/that/my...).",
+      examples: "+ The engineer who developed this application received the award.\n+ Dr. Harrison, whom we interviewed yesterday, has accepted the position.\n+ The company whose headquarters is in Tokyo announced a new strategy.",
+      tips: "LUẬT VÀNG: Sau dấu phẩy và sau giới từ (in, on, with...) TUYỆT ĐỐI KHÔNG BAO GIỜ dùng 'THAT'.",
+      created_at: "2026-11-25 11:30:00"
+    },
+    {
+      id: 14,
+      session_id: 4,
+      title: "2. Rút gọn mệnh đề quan hệ đỉnh cao (Reduced Relative Clauses)",
       structure: "1. Chủ động ➡️ V-ing | 2. Bị động ➡️ V3/ed | 3. Sau the first, last, only, so sánh nhất ➡️ To V",
       explanation: "Biến đổi giúp câu văn ngắn gọn, học thuật và đạt điểm cao trong bài thi tiếng Anh:\n- Chủ động: The girl who is talking to Nam ➡️ The girl talking to Nam.\n- Bị động: The laptops which were manufactured in 2025 ➡️ The laptops manufactured in 2025.\n- Cụm thứ tự: Yuri Gagarin was the first person who flew into space ➡️ the first person to fly into space.",
       examples: "+ Active: Documents submitted after 5 PM will not be processed.\n+ Passive: The keynote address delivered by the CEO inspired everyone.\n+ To-V: She is the only candidate to achieve a perfect band score.",
       tips: "Luôn xác định xem danh từ phía trước là CHỦ THỂ (hành động ➡️ V-ing) hay ĐỐI TƯỢNG (bị tác động ➡️ V3/ed).",
-      created_at: "2026-11-25 09:35:00"
+      created_at: "2026-11-25 11:35:00"
     },
 
-    // Buổi 3: Phát âm đuôi -ED
+    // ==========================================
+    // BUỔI 5: QUY TẮC PHÁT ÂM ĐUÔI -ED
+    // ==========================================
     {
-      id: 7,
-      session_id: 3,
+      id: 15,
+      session_id: 5,
       title: "1. Ba quy tắc vàng phát âm đuôi -ED (/id/, /t/, /d/)",
       structure: "1. Đọc là /id/: sau âm /t/ và /d/\n2. Đọc là /t/: sau âm vô thanh (/p, k, f, s, ʃ, tʃ/)\n3. Đọc là /d/: các âm hữu thanh còn lại",
       explanation: "- Nhóm 1 (/id/): wanted, needed, decided, started, invited, landed.\n- Nhóm 2 (/t/): Âm kết thúc là các âm vô thanh (không rung thanh quản, mẹo: 'Chính Phủ Phát Sách Không Thèm / Thảo'): stopped, looked, laughed, washed, watched, kissed, fixed.\n- Nhóm 3 (/d/): Các âm hữu thanh (rung cổ họng + nguyên âm): played, opened, lived, cleaned, called, enjoyed, preferred.",
       examples: "+ /id/: They decided to postpone the tournament until next week.\n+ /t/: He walked to the office, checked his email, and fixed the bug.\n+ /d/: She called her parents and explained the whole situation.",
       tips: "Nhìn vào ÂM CUỐI CÙNG được phát âm, KHÔNG nhìn vào chữ cái viết (ví dụ: 'laughed' tận cùng chữ gh nhưng phát âm là /f/ ➡️ đọc là /t/).",
-      created_at: "2026-11-25 10:30:00"
+      created_at: "2026-11-25 12:30:00"
     },
     {
-      id: 8,
-      session_id: 3,
+      id: 16,
+      session_id: 5,
       title: "2. Danh sách tính từ ngoại lệ bắt buộc phát âm là /id/",
       structure: "Danh sách từ đặc biệt: naked, wicked, learned, ragged, sacred, blessed, crooked...",
       explanation: "Khi các từ này đóng vai trò là TÍNH TỪ (Adjectives), đuôi -ed luôn phát âm là /id/ thay vì /t/ hay /d/ như quy tắc thông thường.",
       examples: "+ naked /ˈneɪkɪd/ (trần trụi, khỏa thân)\n+ wicked /ˈwɪkɪd/ (độc ác, xấu xa)\n+ learned /ˈlɜːnɪd/ (uyên bác, có học thức - e.g. a learned professor)\n+ ragged /ˈræɡɪd/ (rách rưới, tả tơi)\n+ sacred /ˈseɪkrɪd/ (thiêng liêng, trang trọng)\n+ blessed /ˈblesɪd/ (may mắn, thần thánh)\n+ crooked /ˈkrʊkɪd/ (quanh co, cong queo)",
       tips: "Trong bài thi trắc nghiệm phát âm THPTQG và TOEIC, các từ ngoại lệ này xuất hiện với tần suất trên 80%!",
-      created_at: "2026-11-25 10:35:00"
+      created_at: "2026-11-25 12:35:00"
     },
 
-    // Buổi 4: Nối âm (Connected Speech)
+    // ==========================================
+    // BUỔI 6: NỐI ÂM & NGỮ ĐIỆU (CONNECTED SPEECH)
+    // ==========================================
     {
-      id: 9,
-      session_id: 4,
+      id: 17,
+      session_id: 6,
       title: "1. Nối âm Phụ âm - Nguyên âm & Nguyên âm - Nguyên âm",
       structure: "Phụ âm + Nguyên âm: C + V ➡️ Nối dính | Nguyên âm + Nguyên âm: V + V ➡️ Chèn âm /j/ hoặc /w/",
       explanation: "1. Phụ âm nối nguyên âm (C+V): Âm cuối từ trước nối thẳng sang nguyên âm từ sau:\n   - 'Hold on' ➡️ /həʊl-dɒn/\n   - 'Turn off' ➡️ /tɜːn-nɒf/\n   - 'Wake up' ➡️ /weɪ-kʌp/\n   - 'An apple' ➡️ /ən-næpl/\n2. Nguyên âm nối nguyên âm (V+V):\n   - Kết thúc miệng dẹt (/i:, ɪ, eɪ, aɪ, ɔɪ/) ➡️ Chèn âm /j/ (y): 'I agree' ➡️ /aɪ-j-əˈɡriː/, 'See it' ➡️ /siː-j-ɪt/.\n   - Kết thúc miệng tròn (/u:, əʊ, aʊ/) ➡️ Chèn âm /w/: 'Go out' ➡️ /ɡəʊ-w-aʊt/, 'You are' ➡️ /juː-w-ɑːr/.",
       examples: "+ C+V: Can I have a cup of water? ➡️ /kæn-aɪ hæv-ə kʌp-əv wɔːtər/\n+ V+V (/j/): She asked me to say it again. ➡️ /seɪ-j-ɪt/\n+ V+V (/w/): Let's do it right away. ➡️ /duː-w-ɪt/",
       tips: "Khi nói tiếng Anh, đừng cố phát âm rời rạc như gõ máy; hãy để luồng hơi nối trơn tru giữa các âm tiết.",
-      created_at: "2026-11-25 11:30:00"
+      created_at: "2026-11-25 13:30:00"
     },
     {
-      id: 10,
-      session_id: 4,
+      id: 18,
+      session_id: 6,
       title: "2. Biến âm (Assimilation) & Nuốt âm (Elision) trong giao tiếp",
       structure: "/t/ + /j/ ➡️ /tʃ/ | /d/ + /j/ ➡️ /dʒ/ | Nuốt /t/, /d/ kẹt giữa 2 phụ âm",
       explanation: "1. Biến âm (Assimilation):\n   - /t/ gặp /j/: 'Nice to meet you' ➡️ /miːtʃu/, 'Don't you' ➡️ /dəʊntʃu/.\n   - /d/ gặp /j/: 'Did you' ➡️ /dɪdʒu/, 'Could you' ➡️ /kʊdʒu/.\n2. Nuốt âm (Elision): Bỏ hẳn âm /t/ hoặc /d/ khi đứng giữa hai phụ âm khác để nói nhanh hơn:\n   - 'Last night' ➡️ /lɑːs naɪt/ (bỏ /t/)\n   - 'Next door' ➡️ /neks dɔːr/ (bỏ /t/)\n   - 'Post card' ➡️ /pəʊs kɑːd/",
       examples: "+ Could you tell me what you need? ➡️ /kʊdʒu tel miː wʌtʃu niːd/\n+ I saw him last night next door. ➡️ /lɑːs naɪt neks dɔːr/\n+ Don't you want to come? ➡️ /dəʊntʃu wɒntə kʌm/",
       tips: "Nắm được quy tắc này bạn sẽ nghe hiểu người bản xứ khi họ nói nhanh (Fast Native Speech) mà không bị bỡ ngỡ.",
-      created_at: "2026-11-25 11:35:00"
+      created_at: "2026-11-25 13:35:00"
     }
   ]
 };
 
 // LocalStorage Controller with auto-upgrade
-const CURRENT_CURRICULUM_VERSION = 'v3_complete_curriculum';
+const CURRENT_CURRICULUM_VERSION = 'v4_all_12_tenses';
 
 const localDb = {
   get(key) {
