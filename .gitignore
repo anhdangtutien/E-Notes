@@ -1,0 +1,19 @@
+# Rust build directory
+/target/
+**/*.rs.bk
+*.pdb
+
+# Executables
+*.exe
+
+# SQLite database files
+*.db
+*.db-shm
+*.db-wal
+enotes.db
+
+# OS and IDE files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

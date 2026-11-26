@@ -1,0 +1,21 @@
+app = "e-notes-app"
+primary_region = "sin"
+
+[build]
+  dockerfile = "Dockerfile"
+
+[env]
+  PORT = "8080"
+  HOST = "0.0.0.0"
+  ENOTES_DB = "/data/enotes.db"
+
+[http_service]
+  internal_port = 8080
+  force_https = true
+  auto_stop_machines = 'stop'
+  auto_start_machines = true
+  min_machines_running = 0
+
+[[mounts]]
+  source = "enotes_data"
+  destination = "/data"
