@@ -22,6 +22,11 @@ fn main() -> std::io::Result<()> {
     }
 
     let db_path = env::var("ENOTES_DB").unwrap_or_else(|_| "enotes.db".to_string());
+    if let Some(parent) = Path::new(&db_path).parent() {
+        if !parent.as_os_str().is_empty() && !parent.exists() {
+            let _ = fs::create_dir_all(parent);
+        }
+    }
     let db = match Db::open(&db_path) {
         Ok(d) => {
             println!("✓ SQLite database connected: {}", db_path);

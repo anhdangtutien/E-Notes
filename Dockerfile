@@ -21,6 +21,7 @@ FROM debian:bookworm-slim
 WORKDIR /app
 
 RUN apt-get update && apt-get install -y ca-certificates libsqlite3-0 && rm -rf /var/lib/apt/lists/*
+RUN mkdir -p /data /app
 
 # Copy compiled binary and static assets from builder
 COPY --from=builder /usr/src/app/target/release/enotes /app/enotes
@@ -29,7 +30,7 @@ COPY --from=builder /usr/src/app/static /app/static
 # Environment variables
 ENV PORT=8080
 ENV HOST=0.0.0.0
-ENV ENOTES_DB=/data/enotes.db
+ENV ENOTES_DB=/app/enotes.db
 
 # Persistent storage volume for SQLite
 VOLUME ["/data"]
