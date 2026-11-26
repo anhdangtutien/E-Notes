@@ -1,6 +1,8 @@
 /**
  * E-NOTES: Minimalist Vanilla JS Client
- * Complies with Unslop design principles & minimal frontend overhead.
+ * Dual-Mode Engine:
+ * 1. Full REST API mode when running with Rust Backend (Local / Docker)
+ * 2. Automatic LocalStorage Edge mode when deployed on Vercel / Static CDN
  */
 
 // Application State
@@ -12,6 +14,355 @@ const state = {
   flashcardIdx: 0,
   flashcardFlipped: false,
 };
+
+let useLocalStore = false;
+
+// Seed data for standalone/Vercel mode
+const SEED_DATA = {
+  sessions: [
+    {
+      id: 2,
+      session_number: 2,
+      title: "Buổi 2: Conditional Sentences & Hypothetical Scenarios",
+      date: new Date().toISOString().split('T')[0],
+      teacher: "Ms. Sarah Jenkins",
+      goals: "Thành thạo câu điều kiện hỗn hợp (Mixed Conditionals) và cấu trúc Wish/If only.",
+      notes: "Luyện tập phân biệt điều kiện loại 2 (hiện tại) và loại 3 (quá khứ).",
+      created_at: "2026-11-25 10:00:00",
+      updated_at: "2026-11-25 10:00:00"
+    },
+    {
+      id: 1,
+      session_number: 1,
+      title: "Buổi 1: Business English & Negotiations",
+      date: new Date().toISOString().split('T')[0],
+      teacher: "Mr. David Miller",
+      goals: "Nắm vững kỹ năng thuyết trình dự án và đàm phán hợp đồng thương mại.",
+      notes: "Cần chú ý cách diễn đạt gián tiếp (diplomatic language) khi từ chối đối tác lịch sự.",
+      created_at: "2026-11-25 09:00:00",
+      updated_at: "2026-11-25 09:00:00"
+    }
+  ],
+  vocabularies: [
+    {
+      id: 1,
+      session_id: 1,
+      word: "articulate",
+      ipa: "/ɑːrˈtɪkjuleɪt/",
+      pos: "verb / adjective",
+      meaning: "diễn đạt gãy gọn, lưu loát / ăn nói rõ ràng",
+      example_en: "She gave a witty, entertaining, and articulate presentation.",
+      example_vi: "Cô ấy đã có một bài thuyết trình hóm hỉnh, cuốn hút và diễn đạt rất lưu loát.",
+      status: "mastered",
+      notes: "Thường đi với 'articulate an idea / opinion'",
+      created_at: "2026-11-25 09:10:00"
+    },
+    {
+      id: 2,
+      session_id: 1,
+      word: "compromise",
+      ipa: "/ˈkɑːmprəmaɪz/",
+      pos: "noun / verb",
+      meaning: "sự thỏa hiệp, nhượng bộ lẫn nhau",
+      example_en: "We reached a compromise after two hours of tough debate.",
+      example_vi: "Chúng tôi đã đạt được thỏa hiệp sau hai giờ tranh luận căng thẳng.",
+      status: "learning",
+      notes: "Collocation: reach/arrive at a compromise",
+      created_at: "2026-11-25 09:15:00"
+    },
+    {
+      id: 3,
+      session_id: 1,
+      word: "concession",
+      ipa: "/kənˈseʃn/",
+      pos: "noun",
+      meaning: "sự nhượng bộ trong đàm phán",
+      example_en: "Both parties made major concessions to secure the deal.",
+      example_vi: "Cả hai bên đều đã có những nhượng bộ lớn để ký kết được hợp đồng.",
+      status: "learning",
+      notes: "Make a concession: nhượng bộ điều gì đó",
+      created_at: "2026-11-25 09:20:00"
+    },
+    {
+      id: 4,
+      session_id: 2,
+      word: "contingency",
+      ipa: "/kənˈtɪndʒənsi/",
+      pos: "noun",
+      meaning: "kế hoạch dự phòng, trường hợp khẩn cấp có thể xảy ra",
+      example_en: "We need a contingency plan in case the supplier delays shipments.",
+      example_vi: "Chúng ta cần một kế hoạch dự phòng đề phòng trường hợp nhà cung ứng chậm giao hàng.",
+      status: "reviewing",
+      notes: "Contingency plan = Plan B",
+      created_at: "2026-11-25 10:10:00"
+    },
+    {
+      id: 5,
+      session_id: 2,
+      word: "hindsight",
+      ipa: "/ˈhaɪndsaɪt/",
+      pos: "noun",
+      meaning: "sự suy xét lại sau khi sự việc đã xảy ra",
+      example_en: "With hindsight, we should have invested in automated testing much sooner.",
+      example_vi: "Nhìn lại quá khứ, đáng lẽ chúng ta nên đầu tư vào kiểm thử tự động sớm hơn.",
+      status: "learning",
+      notes: "Idiom: 'With hindsight' hoặc 'In hindsight'",
+      created_at: "2026-11-25 10:15:00"
+    }
+  ],
+  grammars: [
+    {
+      id: 1,
+      session_id: 1,
+      title: "Diplomatic Language (Ngôn ngữ ngoại giao / Giảm nhẹ)",
+      structure: "Subject + seem / appear / tend + to V | I was wondering if... | Wouldn't it be better if...",
+      explanation: "Sử dụng để giảm bớt sự gay gắt khi nêu ý kiến trái chiều hoặc chỉ trích đối tác trong môi trường công sở quốc tế.",
+      examples: "Direct: 'Your price is too high.'\nDiplomatic: 'Your pricing seems to be slightly above our current budget constraints.'\nDirect: 'Send me the report now.'\nDiplomatic: 'I was wondering if you could possibly send over the report by 3 PM.'",
+      tips: "Tránh dùng 'You must' hoặc 'You are wrong' trong đàm phán chuyên nghiệp.",
+      created_at: "2026-11-25 09:30:00"
+    },
+    {
+      id: 2,
+      session_id: 2,
+      title: "Mixed Conditional: Past Action with Present Result",
+      structure: "If + S + had + V3/ed (Quá khứ), S + would + V-inf (Hiện tại)",
+      explanation: "Diễn tả một giả định trái ngược với quá khứ, dẫn đến một kết quả ảnh hưởng trực tiếp đến hiện tại.",
+      examples: "+ If I had taken that training course last year, I would speak fluent English today.\n- If he hadn't missed the flight yesterday, he wouldn't be stuck at the airport now.\n? Would you have this high position today if you hadn't worked so hard?",
+      tips: "Chú ý trạng từ thời gian: vế If có dấu hiệu quá khứ (yesterday, last year), vế chính có dấu hiệu hiện tại (now, today).",
+      created_at: "2026-11-25 10:30:00"
+    }
+  ]
+};
+
+// LocalStorage Controller
+const localDb = {
+  get(key) {
+    const raw = localStorage.getItem('enotes_' + key);
+    if (!raw) {
+      if (SEED_DATA[key]) {
+        localStorage.setItem('enotes_' + key, JSON.stringify(SEED_DATA[key]));
+        return JSON.parse(JSON.stringify(SEED_DATA[key]));
+      }
+      return [];
+    }
+    try {
+      return JSON.parse(raw);
+    } catch (e) {
+      return [];
+    }
+  },
+  set(key, val) {
+    localStorage.setItem('enotes_' + key, JSON.stringify(val));
+  }
+};
+
+// LocalStorage API Emulator
+function handleLocalApi(path, options = {}) {
+  const method = (options.method || 'GET').toUpperCase();
+  const body = options.body ? JSON.parse(options.body) : {};
+  const now = new Date().toISOString().replace('T', ' ').substring(0, 19);
+
+  // Stats
+  if (path === '/api/stats') {
+    const s = localDb.get('sessions');
+    const v = localDb.get('vocabularies');
+    const g = localDb.get('grammars');
+    const mastered = v.filter(item => item.status === 'mastered').length;
+    return {
+      total_sessions: s.length,
+      total_vocab: v.length,
+      total_grammar: g.length,
+      mastered_vocab: mastered,
+      learning_vocab: v.length - mastered,
+    };
+  }
+
+  // Sessions List / Create
+  if (path === '/api/sessions') {
+    const list = localDb.get('sessions');
+    if (method === 'GET') {
+      return list.sort((a, b) => b.session_number - a.session_number);
+    }
+    if (method === 'POST') {
+      const nextId = list.length > 0 ? Math.max(...list.map(i => i.id)) + 1 : 1;
+      const nextNum = body.session_number || (list.length > 0 ? Math.max(...list.map(i => i.session_number)) + 1 : 1);
+      const newSession = {
+        id: nextId,
+        session_number: nextNum,
+        title: body.title,
+        date: body.date || new Date().toISOString().split('T')[0],
+        teacher: body.teacher || null,
+        goals: body.goals || null,
+        notes: body.notes || null,
+        created_at: now,
+        updated_at: now,
+      };
+      list.push(newSession);
+      localDb.set('sessions', list);
+      return newSession;
+    }
+  }
+
+  // Session Detail / Update / Delete
+  const sessionMatch = path.match(/^\/api\/sessions\/(\d+)$/);
+  if (sessionMatch) {
+    const id = parseInt(sessionMatch[1]);
+    const list = localDb.get('sessions');
+    const idx = list.findIndex(i => i.id === id);
+
+    if (method === 'GET') {
+      if (idx === -1) throw new Error('Session not found');
+      const vocab = localDb.get('vocabularies').filter(v => v.session_id === id);
+      const grammar = localDb.get('grammars').filter(g => g.session_id === id);
+      return {
+        session: list[idx],
+        vocabularies: vocab,
+        grammars: grammar,
+      };
+    }
+    if (method === 'PUT') {
+      if (idx === -1) throw new Error('Session not found');
+      list[idx] = { ...list[idx], ...body, updated_at: now };
+      localDb.set('sessions', list);
+      return list[idx];
+    }
+    if (method === 'DELETE') {
+      if (idx !== -1) {
+        list.splice(idx, 1);
+        localDb.set('sessions', list);
+        // Cascade delete vocab & grammar
+        const vocab = localDb.get('vocabularies').filter(v => v.session_id !== id);
+        localDb.set('vocabularies', vocab);
+        const grammar = localDb.get('grammars').filter(g => g.session_id !== id);
+        localDb.set('grammars', grammar);
+      }
+      return { deleted: true, id };
+    }
+  }
+
+  // Vocabularies Create
+  if (path === '/api/vocabularies' && method === 'POST') {
+    const list = localDb.get('vocabularies');
+    const nextId = list.length > 0 ? Math.max(...list.map(i => i.id)) + 1 : 1;
+    const newVocab = {
+      id: nextId,
+      session_id: body.session_id,
+      word: body.word,
+      ipa: body.ipa || null,
+      pos: body.pos || null,
+      meaning: body.meaning,
+      example_en: body.example_en || null,
+      example_vi: body.example_vi || null,
+      status: body.status || 'learning',
+      notes: body.notes || null,
+      created_at: now,
+    };
+    list.push(newVocab);
+    localDb.set('vocabularies', list);
+    return newVocab;
+  }
+
+  // Vocabularies Update / Delete
+  const vocabMatch = path.match(/^\/api\/vocabularies\/(\d+)$/);
+  if (vocabMatch) {
+    const id = parseInt(vocabMatch[1]);
+    const list = localDb.get('vocabularies');
+    const idx = list.findIndex(i => i.id === id);
+
+    if (method === 'PUT') {
+      if (idx === -1) throw new Error('Vocabulary not found');
+      list[idx] = { ...list[idx], ...body };
+      localDb.set('vocabularies', list);
+      return list[idx];
+    }
+    if (method === 'DELETE') {
+      if (idx !== -1) {
+        list.splice(idx, 1);
+        localDb.set('vocabularies', list);
+      }
+      return { deleted: true, id };
+    }
+  }
+
+  // Grammars Create
+  if (path === '/api/grammars' && method === 'POST') {
+    const list = localDb.get('grammars');
+    const nextId = list.length > 0 ? Math.max(...list.map(i => i.id)) + 1 : 1;
+    const newGrammar = {
+      id: nextId,
+      session_id: body.session_id,
+      title: body.title,
+      structure: body.structure,
+      explanation: body.explanation,
+      examples: body.examples,
+      tips: body.tips || null,
+      created_at: now,
+    };
+    list.push(newGrammar);
+    localDb.set('grammars', list);
+    return newGrammar;
+  }
+
+  // Grammars Update / Delete
+  const grammarMatch = path.match(/^\/api\/grammars\/(\d+)$/);
+  if (grammarMatch) {
+    const id = parseInt(grammarMatch[1]);
+    const list = localDb.get('grammars');
+    const idx = list.findIndex(i => i.id === id);
+
+    if (method === 'PUT') {
+      if (idx === -1) throw new Error('Grammar not found');
+      list[idx] = { ...list[idx], ...body };
+      localDb.set('grammars', list);
+      return list[idx];
+    }
+    if (method === 'DELETE') {
+      if (idx !== -1) {
+        list.splice(idx, 1);
+        localDb.set('grammars', list);
+      }
+      return { deleted: true, id };
+    }
+  }
+
+  // Search
+  if (path.startsWith('/api/search')) {
+    const query = new URLSearchParams(path.split('?')[1] || '').get('q') || '';
+    const q = query.toLowerCase();
+    const sessions = localDb.get('sessions').filter(s =>
+      (s.title && s.title.toLowerCase().includes(q)) ||
+      (s.teacher && s.teacher.toLowerCase().includes(q)) ||
+      (s.goals && s.goals.toLowerCase().includes(q)) ||
+      (s.notes && s.notes.toLowerCase().includes(q))
+    );
+    const vocabularies = localDb.get('vocabularies').filter(v =>
+      (v.word && v.word.toLowerCase().includes(q)) ||
+      (v.meaning && v.meaning.toLowerCase().includes(q)) ||
+      (v.example_en && v.example_en.toLowerCase().includes(q)) ||
+      (v.example_vi && v.example_vi.toLowerCase().includes(q))
+    );
+    const grammars = localDb.get('grammars').filter(g =>
+      (g.title && g.title.toLowerCase().includes(q)) ||
+      (g.structure && g.structure.toLowerCase().includes(q)) ||
+      (g.explanation && g.explanation.toLowerCase().includes(q)) ||
+      (g.examples && g.examples.toLowerCase().includes(q))
+    );
+    return { sessions, vocabularies, grammars };
+  }
+
+  // Backup Import
+  if (path === '/api/backup/import' && method === 'POST') {
+    if (body.sessions && body.vocabularies && body.grammars) {
+      localDb.set('sessions', body.sessions);
+      localDb.set('vocabularies', body.vocabularies);
+      localDb.set('grammars', body.grammars);
+      return { success: true };
+    }
+    throw new Error('Dữ liệu sao lưu không đúng định dạng');
+  }
+
+  throw new Error(`Endpoint not supported in client mode: ${path}`);
+}
 
 // DOM Elements
 const el = {
@@ -82,8 +433,12 @@ const el = {
   btnSubmitGrammar: document.getElementById('btnSubmitGrammar'),
 };
 
-// API Helpers
+// API Helpers with automatic fallback
 async function api(path, options = {}) {
+  if (useLocalStore) {
+    return handleLocalApi(path, options);
+  }
+
   try {
     const res = await fetch(path, {
       headers: {
@@ -93,13 +448,20 @@ async function api(path, options = {}) {
       ...options,
     });
     if (!res.ok) {
+      // If serverless 404 / 500 on Vercel, switch to localStore automatically
+      if (res.status === 404 || res.status === 405 || res.status >= 500) {
+        console.warn('Backend unavailable, switching to local storage mode');
+        useLocalStore = true;
+        return handleLocalApi(path, options);
+      }
       const err = await res.text();
       throw new Error(err || `Lỗi HTTP ${res.status}`);
     }
     return await res.json();
   } catch (e) {
-    console.error('API Error:', e);
-    throw e;
+    console.warn('Network error, activating client storage mode:', e);
+    useLocalStore = true;
+    return handleLocalApi(path, options);
   }
 }
 
@@ -824,9 +1186,25 @@ async function doSearch(q) {
   }
 }
 
-// Backup Export & Import
+// Backup Export & Import (Supports both Server & Vercel client-side)
 el.btnExport.onclick = () => {
-  window.location.href = '/api/backup/export';
+  if (useLocalStore) {
+    const data = {
+      sessions: localDb.get('sessions'),
+      vocabularies: localDb.get('vocabularies'),
+      grammars: localDb.get('grammars'),
+      exported_at: new Date().toISOString()
+    };
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'enotes_backup.json';
+    a.click();
+    URL.revokeObjectURL(url);
+  } else {
+    window.location.href = '/api/backup/export';
+  }
 };
 
 el.btnImport.onclick = () => {
