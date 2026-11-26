@@ -19,6 +19,18 @@
           </div>
         </div>
 
+        <!-- Role Selector (Giáo viên / Học viên) -->
+        <div class="role-selector">
+          <button class="role-btn active" id="roleBtnTeacher" data-role="teacher">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+            Giáo viên
+          </button>
+          <button class="role-btn" id="roleBtnStudent" data-role="student">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"></path><path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5"></path></svg>
+            Học viên
+          </button>
+        </div>
+
         <div class="search-box">
           <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <circle cx="11" cy="11" r="8"></circle>
@@ -27,7 +39,7 @@
           <input type="text" id="searchInput" class="search-input" placeholder="Tìm từ vựng, ngữ pháp, bài học...">
         </div>
 
-        <div class="sidebar-actions">
+        <div class="sidebar-actions teacher-only">
           <button id="btnNewSession" class="btn btn-primary" style="flex: 1;">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <line x1="12" y1="5" x2="12" y2="19"></line>
@@ -89,9 +101,14 @@
             </div>
 
             <div style="display: flex; gap: 8px;">
-              <button id="btnEditSession" class="btn btn-secondary btn-sm">Chỉnh sửa</button>
-              <button id="btnDeleteSession" class="btn btn-secondary btn-sm btn-danger-ghost">Xóa buổi học</button>
+              <button id="btnEditSession" class="btn btn-secondary btn-sm teacher-only">Chỉnh sửa</button>
+              <button id="btnDeleteSession" class="btn btn-secondary btn-sm btn-danger-ghost teacher-only">Xóa buổi học</button>
             </div>
+          </div>
+
+          <div class="role-info-banner">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+            <span><strong>Chế độ Học viên:</strong> Bạn có thể nghe phát âm, lật thẻ flashcard và đổi trạng thái từ vựng cá nhân. Nội dung buổi học được quản lý bởi giáo viên.</span>
           </div>
 
           <div class="lesson-goals-box" id="viewSessionGoalsBox" style="display: none;">
@@ -115,7 +132,7 @@
                 Từ vựng ghi chép
                 <span class="section-count" id="countVocabBadge">0 từ</span>
               </h2>
-              <button id="btnAddVocab" class="btn btn-primary btn-sm">
+              <button id="btnAddVocab" class="btn btn-primary btn-sm teacher-only">
                 + Thêm từ vựng
               </button>
             </div>
@@ -131,7 +148,7 @@
                 Điểm ngữ pháp & Cấu trúc
                 <span class="section-count" id="countGrammarBadge">0 điểm</span>
               </h2>
-              <button id="btnAddGrammar" class="btn btn-primary btn-sm">
+              <button id="btnAddGrammar" class="btn btn-primary btn-sm teacher-only">
                 + Thêm ngữ pháp
               </button>
             </div>
@@ -144,7 +161,7 @@
           <div class="tab-content" id="tabContentNotes" style="display: none;">
             <div class="section-toolbar">
               <h2 class="section-heading">Ghi chú tổng hợp</h2>
-              <button id="btnSaveNotes" class="btn btn-primary btn-sm">Lưu ghi chú</button>
+              <button id="btnSaveNotes" class="btn btn-primary btn-sm teacher-only">Lưu ghi chú</button>
             </div>
             <div class="vocab-card" style="padding: 16px;">
               <textarea id="sessionNotesText" class="form-textarea" rows="12" placeholder="Ghi chép các lưu ý từ giáo viên, bài tập về nhà, mẹo phát âm hoặc liên kết tài liệu..."></textarea>

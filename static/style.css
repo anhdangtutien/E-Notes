@@ -180,6 +180,65 @@ body {
   100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
 }
 
+.role-selector {
+  display: flex;
+  background: var(--bg-subtle);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 2px;
+  margin-bottom: var(--sp-3);
+  gap: 2px;
+}
+
+.role-btn {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: 28px;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: var(--radius-sm);
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.role-btn:hover {
+  color: var(--text-primary);
+}
+
+.role-btn.active {
+  background: var(--bg-surface);
+  color: var(--text-primary);
+  box-shadow: var(--shadow-sm);
+}
+
+/* Role Visibility Controls */
+body.role-student .teacher-only {
+  display: none !important;
+}
+
+.role-info-banner {
+  display: none;
+  background: #EFF6FF;
+  border: 1px solid #BFDBFE;
+  border-radius: var(--radius-md);
+  padding: 8px 14px;
+  margin-bottom: 14px;
+  font-size: 12px;
+  color: #1E40AF;
+  align-items: center;
+  gap: 8px;
+}
+
+body.role-student .role-info-banner {
+  display: flex;
+}
+
 .search-box {
   position: relative;
   margin-bottom: var(--sp-3);

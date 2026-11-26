@@ -628,8 +628,8 @@ function renderVocabList(vocabularies) {
           <span class="status-pill status-${v.status}" onclick="cycleVocabStatus(${v.id}, '${v.status}')" title="Nhấp để chuyển trạng thái">
             ${statusLabels[v.status] || v.status}
           </span>
-          <button class="btn btn-secondary btn-sm" onclick="openVocabModal(${v.id})">Sửa</button>
-          <button class="btn btn-secondary btn-sm btn-danger-ghost" onclick="deleteVocab(${v.id})">Xóa</button>
+          <button class="btn btn-secondary btn-sm teacher-only" onclick="openVocabModal(${v.id})">Sửa</button>
+          <button class="btn btn-secondary btn-sm btn-danger-ghost teacher-only" onclick="deleteVocab(${v.id})">Xóa</button>
         </div>
       </div>
       <div class="vocab-meaning">${escapeHtml(v.meaning)}</div>
@@ -670,8 +670,8 @@ function renderGrammarList(grammars) {
       <div style="display: flex; justify-content: space-between; align-items: flex-start;">
         <h3 class="grammar-title">${escapeHtml(g.title)}</h3>
         <div style="display: flex; gap: 6px;">
-          <button class="btn btn-secondary btn-sm" onclick="openGrammarModal(${g.id})">Sửa</button>
-          <button class="btn btn-secondary btn-sm btn-danger-ghost" onclick="deleteGrammar(${g.id})">Xóa</button>
+          <button class="btn btn-secondary btn-sm teacher-only" onclick="openGrammarModal(${g.id})">Sửa</button>
+          <button class="btn btn-secondary btn-sm btn-danger-ghost teacher-only" onclick="deleteGrammar(${g.id})">Xóa</button>
         </div>
       </div>
       <div class="grammar-structure-box">${escapeHtml(g.structure)}</div>
@@ -1308,5 +1308,34 @@ setInterval(() => {
   }
 }, 5000);
 
-// Initialize Application
+// Role Management (Giáo viên / Học viên)
+let currentRole = localStorage.getItem('enotes_current_role') || 'teacher';
+
+function setRole(role) {
+  currentRole = role;
+  localStorage.setItem('enotes_current_role', role);
+
+  const btnTeacher = document.getElementById('roleBtnTeacher');
+  const btnStudent = document.getElementById('roleBtnStudent');
+
+  if (role === 'student') {
+    document.body.classList.add('role-student');
+    document.body.classList.remove('role-teacher');
+    if (btnStudent) btnStudent.classList.add('active');
+    if (btnTeacher) btnTeacher.classList.remove('active');
+    if (el.sessionNotesText) el.sessionNotesText.readOnly = true;
+  } else {
+    document.body.classList.add('role-teacher');
+    document.body.classList.remove('role-student');
+    if (btnTeacher) btnTeacher.classList.add('active');
+    if (btnStudent) btnStudent.classList.remove('active');
+    if (el.sessionNotesText) el.sessionNotesText.readOnly = false;
+  }
+}
+
+document.getElementById('roleBtnTeacher')?.addEventListener('click', () => setRole('teacher'));
+document.getElementById('roleBtnStudent')?.addEventListener('click', () => setRole('student'));
+
+// Initialize Application & Role
+setRole(currentRole);
 loadSessions();
