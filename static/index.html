@@ -252,21 +252,28 @@
       <div class="modal-body">
         <form id="formVocab">
           <input type="hidden" id="vocabFormId">
-          <div class="form-row">
-            <div class="form-group">
-              <label class="form-label">Từ / Cụm từ tiếng Anh *</label>
-              <input type="text" id="vocabFormWord" class="form-input" placeholder="e.g. articulate" required>
+          <div class="form-group" style="margin-bottom: 12px;">
+            <label class="form-label">Từ / Cụm từ tiếng Anh *</label>
+            <div style="display: flex; gap: 8px;">
+              <input type="text" id="vocabFormWord" class="form-input" placeholder="e.g. resilient, articulate, persistent..." required style="flex: 1;">
+              <button type="button" id="btnQuickLookup" class="btn btn-secondary" style="white-space: nowrap; font-size: 12px; height: 36px;" title="Tự động tra cứu IPA, từ loại, ví dụ và nghĩa từ từ điển trực tuyến">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+                Tra nhanh API
+              </button>
             </div>
+            <div id="lookupStatus" style="font-size: 11px; margin-top: 4px; display: none;"></div>
+          </div>
+          <div class="form-row">
             <div class="form-group">
               <label class="form-label">Phiên âm (IPA)</label>
               <input type="text" id="vocabFormIpa" class="form-input" placeholder="/ɑːrˈtɪkjuleɪt/">
             </div>
-          </div>
-          <div class="form-row">
             <div class="form-group">
               <label class="form-label">Từ loại</label>
               <input type="text" id="vocabFormPos" class="form-input" placeholder="noun, verb, adj, idiom...">
             </div>
+          </div>
+          <div class="form-row">
             <div class="form-group">
               <label class="form-label">Trạng thái học</label>
               <select id="vocabFormStatus" class="form-select">

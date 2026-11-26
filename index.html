@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>E-Notes — Sổ tay học tiếng Anh (Rust Core)</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <div class="app-container">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <div class="app-branding">
+          <div class="brand-title">
+            <span>E-Notes</span>
+            <span class="brand-badge">RUST CORE</span>
+            <span class="realtime-badge" title="Đồng bộ dữ liệu thời gian thực"><span class="realtime-dot"></span> LIVE</span>
+          </div>
+        </div>
+
+        <!-- Role Selector (Giáo viên / Học viên) -->
+        <div class="role-selector">
+          <button class="role-btn active" id="roleBtnTeacher" data-role="teacher">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+            Giáo viên
+          </button>
+          <button class="role-btn" id="roleBtnStudent" data-role="student">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"></path><path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5"></path></svg>
+            Học viên
+          </button>
+        </div>
+
+        <div class="search-box">
+          <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+          <input type="text" id="searchInput" class="search-input" placeholder="Tìm từ vựng, ngữ pháp, bài học...">
+        </div>
+
+        <div class="sidebar-actions teacher-only">
+          <button id="btnNewSession" class="btn btn-primary" style="flex: 1;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="12" y1="5" x2="12" y2="19"></line>
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+            Tạo buổi học
+          </button>
+        </div>
+
+        <div class="stats-summary" id="statsBar">
+          <div class="stat-item">
+            <span class="stat-val" id="statSessions">-</span>
+            <span class="stat-lbl">Buổi học</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-val" id="statVocab">-</span>
+            <span class="stat-lbl">Từ vựng</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-val" id="statGrammar">-</span>
+            <span class="stat-lbl">Ngữ pháp</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-val" id="statMastered">-</span>
+            <span class="stat-lbl">Đã thuộc</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="session-list-header">
+        <span>Danh sách buổi học</span>
+        <span id="sessionListCount">0</span>
+      </div>
+
+      <ul class="session-list" id="sessionList">
+        <!-- Rendered by JS -->
+      </ul>
+
+      <div class="sidebar-footer">
+        <button id="btnExport" class="btn btn-secondary btn-sm" title="Sao lưu dữ liệu ra file JSON">Xuất JSON</button>
+        <button id="btnImport" class="btn btn-secondary btn-sm" title="Khôi phục dữ liệu từ file JSON">Nhập JSON</button>
+        <input type="file" id="importFileInput" accept=".json" style="display: none;">
+      </div>
+    </aside>
+
+    <!-- Main View -->
+    <main class="main-view" id="mainView">
+      <div id="sessionView" style="display: none;">
+        <!-- Header -->
+        <header class="main-header">
+          <div class="lesson-top-bar">
+            <div>
+              <div class="lesson-tag" id="viewSessionBadge">BUỔI #1</div>
+              <h1 class="lesson-title" id="viewSessionTitle">Chủ đề buổi học</h1>
+              <div class="lesson-meta-row">
+                <span>Ngày: <strong id="viewSessionDate">-</strong></span>
+                <span>Giảng viên/Nguồn: <strong id="viewSessionTeacher">-</strong></span>
+              </div>
+            </div>
+
+            <div style="display: flex; gap: 8px;">
+              <button id="btnEditSession" class="btn btn-secondary btn-sm teacher-only">Chỉnh sửa</button>
+              <button id="btnDeleteSession" class="btn btn-secondary btn-sm btn-danger-ghost teacher-only">Xóa buổi học</button>
+            </div>
+          </div>
+
+          <div class="role-info-banner">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+            <span><strong>Chế độ Học viên:</strong> Bạn có thể nghe phát âm, lật thẻ flashcard và đổi trạng thái từ vựng cá nhân. Nội dung buổi học được quản lý bởi giáo viên.</span>
+          </div>
+
+          <div class="lesson-goals-box" id="viewSessionGoalsBox" style="display: none;">
+            <strong>Mục tiêu buổi học: </strong><span id="viewSessionGoals"></span>
+          </div>
+
+          <nav class="view-tabs">
+            <button class="tab-btn active" data-tab="vocab">Từ vựng (<span id="tabVocabCount">0</span>)</button>
+            <button class="tab-btn" data-tab="grammar">Ngữ pháp (<span id="tabGrammarCount">0</span>)</button>
+            <button class="tab-btn" data-tab="notes">Ghi chú chung</button>
+            <button class="tab-btn" data-tab="practice">Luyện tập Flashcard</button>
+          </nav>
+        </header>
+
+        <!-- Tab contents -->
+        <div class="content-body">
+          <!-- Vocabulary Tab -->
+          <div class="tab-content" id="tabContentVocab">
+            <div class="section-toolbar">
+              <h2 class="section-heading">
+                Từ vựng ghi chép
+                <span class="section-count" id="countVocabBadge">0 từ</span>
+              </h2>
+              <button id="btnAddVocab" class="btn btn-primary btn-sm teacher-only">
+                + Thêm từ vựng
+              </button>
+            </div>
+            <div class="vocab-list" id="vocabList">
+              <!-- Rendered by JS -->
+            </div>
+          </div>
+
+          <!-- Grammar Tab -->
+          <div class="tab-content" id="tabContentGrammar" style="display: none;">
+            <div class="section-toolbar">
+              <h2 class="section-heading">
+                Điểm ngữ pháp & Cấu trúc
+                <span class="section-count" id="countGrammarBadge">0 điểm</span>
+              </h2>
+              <button id="btnAddGrammar" class="btn btn-primary btn-sm teacher-only">
+                + Thêm ngữ pháp
+              </button>
+            </div>
+            <div class="grammar-list" id="grammarList">
+              <!-- Rendered by JS -->
+            </div>
+          </div>
+
+          <!-- Notes Tab -->
+          <div class="tab-content" id="tabContentNotes" style="display: none;">
+            <div class="section-toolbar">
+              <h2 class="section-heading">Ghi chú tổng hợp</h2>
+              <button id="btnSaveNotes" class="btn btn-primary btn-sm teacher-only">Lưu ghi chú</button>
+            </div>
+            <div class="vocab-card" style="padding: 16px;">
+              <textarea id="sessionNotesText" class="form-textarea" rows="12" placeholder="Ghi chép các lưu ý từ giáo viên, bài tập về nhà, mẹo phát âm hoặc liên kết tài liệu..."></textarea>
+            </div>
+          </div>
+
+          <!-- Practice Flashcard Tab -->
+          <div class="tab-content" id="tabContentPractice" style="display: none;">
+            <div class="section-toolbar">
+              <h2 class="section-heading">Luyện tập từ vựng (Flashcard)</h2>
+            </div>
+            <div class="flashcard-wrapper" id="flashcardWrapper">
+              <!-- Rendered by JS -->
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Search Results View -->
+      <div id="searchView" style="display: none; padding: 24px 32px;">
+        <h2 class="section-heading" style="margin-bottom: 16px;">
+          Kết quả tìm kiếm cho: "<span id="searchQueryLabel"></span>"
+        </h2>
+        <div id="searchResultsList"></div>
+      </div>
+
+      <!-- Empty / Welcome state -->
+      <div id="emptyWelcomeView" class="empty-state">
+        <h3>Chào mừng bạn đến với E-Notes</h3>
+        <p>Chọn một buổi học từ danh sách bên trái hoặc nhấn "Tạo buổi học" để bắt đầu ghi chú từ vựng và ngữ pháp mới.</p>
+        <button id="btnWelcomeNewSession" class="btn btn-primary">Tạo buổi học đầu tiên</button>
+      </div>
+    </main>
+  </div>
+
+  <!-- Modal Session (Create / Edit) -->
+  <div class="modal-overlay" id="modalSession" style="display: none;">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3 class="modal-title" id="modalSessionTitle">Tạo buổi học mới</h3>
+        <button class="modal-close" data-close-modal>&times;</button>
+      </div>
+      <div class="modal-body">
+        <form id="formSession">
+          <input type="hidden" id="sessionFormId">
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Số thứ tự buổi học</label>
+              <input type="number" id="sessionFormNumber" class="form-input" min="1" placeholder="Ví dụ: 1">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Ngày học</label>
+              <input type="date" id="sessionFormDate" class="form-input" required>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Tiêu đề buổi học *</label>
+            <input type="text" id="sessionFormTitle" class="form-input" placeholder="Ví dụ: Buổi 1: Business Presentation" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Giảng viên / Nguồn học</label>
+            <input type="text" id="sessionFormTeacher" class="form-input" placeholder="Ví dụ: Mr. David Miller, Khóa IELTS 7.0...">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Mục tiêu buổi học</label>
+            <textarea id="sessionFormGoals" class="form-textarea" rows="2" placeholder="Ví dụ: Nắm vững cấu trúc câu điều kiện loại 3..."></textarea>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Ghi chú ban đầu</label>
+            <textarea id="sessionFormNotes" class="form-textarea" rows="2" placeholder="Nội dung tóm tắt..."></textarea>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" data-close-modal>Hủy</button>
+        <button class="btn btn-primary" id="btnSubmitSession">Lưu buổi học</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Vocabulary (Create / Edit) -->
+  <div class="modal-overlay" id="modalVocab" style="display: none;">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3 class="modal-title" id="modalVocabTitle">Thêm từ vựng mới</h3>
+        <button class="modal-close" data-close-modal>&times;</button>
+      </div>
+      <div class="modal-body">
+        <form id="formVocab">
+          <input type="hidden" id="vocabFormId">
+          <div class="form-group" style="margin-bottom: 12px;">
+            <label class="form-label">Từ / Cụm từ tiếng Anh *</label>
+            <div style="display: flex; gap: 8px;">
+              <input type="text" id="vocabFormWord" class="form-input" placeholder="e.g. resilient, articulate, persistent..." required style="flex: 1;">
+              <button type="button" id="btnQuickLookup" class="btn btn-secondary" style="white-space: nowrap; font-size: 12px; height: 36px;" title="Tự động tra cứu IPA, từ loại, ví dụ và nghĩa từ từ điển trực tuyến">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+                Tra nhanh API
+              </button>
+            </div>
+            <div id="lookupStatus" style="font-size: 11px; margin-top: 4px; display: none;"></div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Phiên âm (IPA)</label>
+              <input type="text" id="vocabFormIpa" class="form-input" placeholder="/ɑːrˈtɪkjuleɪt/">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Từ loại</label>
+              <input type="text" id="vocabFormPos" class="form-input" placeholder="noun, verb, adj, idiom...">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Trạng thái học</label>
+              <select id="vocabFormStatus" class="form-select">
+                <option value="learning">Đang học (Learning)</option>
+                <option value="reviewing">Cần ôn tập (Reviewing)</option>
+                <option value="mastered">Đã thuộc (Mastered)</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Nghĩa tiếng Việt *</label>
+            <input type="text" id="vocabFormMeaning" class="form-input" placeholder="Nghĩa của từ..." required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Câu ví dụ tiếng Anh</label>
+            <textarea id="vocabFormExampleEn" class="form-textarea" rows="2" placeholder="She gave an articulate speech."></textarea>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Dịch câu ví dụ</label>
+            <textarea id="vocabFormExampleVi" class="form-textarea" rows="2" placeholder="Cô ấy đã phát biểu rất lưu loát."></textarea>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Ghi chú / Collocations</label>
+            <input type="text" id="vocabFormNotes" class="form-input" placeholder="Đi cùng giới từ gì, bẫy từ vựng...">
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" data-close-modal>Hủy</button>
+        <button class="btn btn-primary" id="btnSubmitVocab">Lưu từ vựng</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Grammar (Create / Edit) -->
+  <div class="modal-overlay" id="modalGrammar" style="display: none;">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3 class="modal-title" id="modalGrammarTitle">Thêm ngữ pháp mới</h3>
+        <button class="modal-close" data-close-modal>&times;</button>
+      </div>
+      <div class="modal-body">
+        <form id="formGrammar">
+          <input type="hidden" id="grammarFormId">
+          <div class="form-group">
+            <label class="form-label">Tên cấu trúc / Chủ điểm *</label>
+            <input type="text" id="grammarFormTitle" class="form-input" placeholder="Ví dụ: Third Conditional, Đảo ngữ Inversion..." required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Công thức / Cấu trúc *</label>
+            <input type="text" id="grammarFormStructure" class="form-input" placeholder="If + S + had + V3/ed, S + would have + V3/ed" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Giải thích cách dùng *</label>
+            <textarea id="grammarFormExplanation" class="form-textarea" rows="3" placeholder="Dùng khi nào, sắc thái nghĩa..." required></textarea>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Các câu ví dụ *</label>
+            <textarea id="grammarFormExamples" class="form-textarea" rows="4" placeholder="+ Khẳng định: ...&#10;- Phủ định: ...&#10;? Nghi vấn: ..." required></textarea>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Mẹo / Bẫy thường gặp</label>
+            <textarea id="grammarFormTips" class="form-textarea" rows="2" placeholder="Lưu ý khi làm bài tập, dấu hiệu nhận biết..."></textarea>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" data-close-modal>Hủy</button>
+        <button class="btn btn-primary" id="btnSubmitGrammar">Lưu ngữ pháp</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="/app.js"></script>
+</body>
+</html>

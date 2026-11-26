@@ -87,100 +87,278 @@ impl Db {
     fn seed_initial_data(&self) -> Result<()> {
         let today = Local::now().format("%Y-%m-%d").to_string();
 
+        // --- BUỔI 1: CÁC THÌ CỐT LÕI (HIỆN TẠI, QUÁ KHỨ, TƯƠNG LAI) ---
         let s1 = self.create_session(CreateSessionReq {
             session_number: Some(1),
-            title: "Buổi 1: Business English & Negotiations".to_string(),
+            title: "Buổi 1: Hệ thống các thì cốt lõi (Hiện tại, Quá khứ, Tương lai)".to_string(),
             date: Some(today.clone()),
             teacher: Some("Mr. David Miller".to_string()),
-            goals: Some("Nắm vững kỹ năng thuyết trình dự án và đàm phán hợp đồng thương mại.".to_string()),
-            notes: Some("Cần chú ý cách diễn đạt gián tiếp (diplomatic language) khi từ chối đối tác lịch sự.".to_string()),
+            goals: Some("Nắm vững bản chất và cách phối hợp các thì Hiện tại, Quá khứ, Tương lai trong văn phong học thuật & giao tiếp.".to_string()),
+            notes: Some("Chú ý phân biệt rõ mốc thời gian xác định (Past Simple) và hành động kéo dài đến nay (Present Perfect).".to_string()),
         })?;
 
         self.create_vocab(CreateVocabReq {
             session_id: s1.id,
+            word: "prioritize".to_string(),
+            ipa: Some("/praɪˈɔːrətaɪz/".to_string()),
+            pos: Some("verb".to_string()),
+            meaning: "ưu tiên việc gì đó lên hàng đầu".to_string(),
+            example_en: Some("You must prioritize tasks based on their urgency and importance.".to_string()),
+            example_vi: Some("Bạn phải ưu tiên các nhiệm vụ dựa trên mức độ khẩn cấp và tầm quan trọng.".to_string()),
+            status: Some("mastered".to_string()),
+            notes: Some("Collocation: prioritize A over B".to_string()),
+        })?;
+
+        self.create_vocab(CreateVocabReq {
+            session_id: s1.id,
+            word: "simultaneously".to_string(),
+            ipa: Some("/ˌsaɪmlˈteɪniəsli/".to_string()),
+            pos: Some("adverb".to_string()),
+            meaning: "đồng thời, cùng một lúc".to_string(),
+            example_en: Some("Two research projects were carried out simultaneously.".to_string()),
+            example_vi: Some("Hai dự án nghiên cứu đã được tiến hành cùng một lúc.".to_string()),
+            status: Some("learning".to_string()),
+            notes: Some("Synonym: at the same time, concurrently".to_string()),
+        })?;
+
+        self.create_vocab(CreateVocabReq {
+            session_id: s1.id,
+            word: "procrastinate".to_string(),
+            ipa: Some("/prəˈkræstɪneɪt/".to_string()),
+            pos: Some("verb".to_string()),
+            meaning: "trì hoãn, chần chừ".to_string(),
+            example_en: Some("People often procrastinate when facing difficult decisions.".to_string()),
+            example_vi: Some("Mọi người thường chần chừ khi phải đối mặt với các quyết định khó khăn.".to_string()),
+            status: Some("learning".to_string()),
+            notes: Some("Noun form: procrastination".to_string()),
+        })?;
+
+        self.create_grammar(CreateGrammarReq {
+            session_id: s1.id,
+            title: "1. Các thì Hiện tại (Present Simple & Present Continuous)".to_string(),
+            structure: "Hiện tại đơn: S + V(s/es) | Hiện tại tiếp diễn: S + am/is/are + V-ing".to_string(),
+            explanation: "- Hiện tại đơn: Diễn tả chân lý, thói quen lặp lại thường xuyên.\n- Hiện tại tiếp diễn: Hành động đang xảy ra tại thời điểm nói hoặc kế hoạch gần.".to_string(),
+            examples: "+ He usually drives to work, but this week he is taking the subway.\n- Water does not boil at 50 degrees Celsius.\n? Are you working on any special assignment right now?".to_string(),
+            tips: Some("Động từ trạng thái (know, believe, understand, belong...) KHÔNG chia ở dạng tiếp diễn (-ing).".to_string()),
+        })?;
+
+        self.create_grammar(CreateGrammarReq {
+            session_id: s1.id,
+            title: "2. Các thì Quá khứ (Past Simple & Past Continuous)".to_string(),
+            structure: "Quá khứ đơn: S + V2/ed | Quá khứ tiếp diễn: S + was/were + V-ing".to_string(),
+            explanation: "- Quá khứ đơn: Hành động đã kết thúc trọn vẹn trong quá khứ có mốc thời gian rõ ràng.\n- Quá khứ tiếp diễn: Hành động đang xảy ra thì hành động khác cắt ngang.".to_string(),
+            examples: "+ I was walking home yesterday when it suddenly started to pour rain.\n- They did not participate in the symposium last month.\n? What were you doing when the emergency siren went off?".to_string(),
+            tips: Some("Phối hợp: 'When + Quá khứ đơn (hành động ngắn cắt ngang), Quá khứ tiếp diễn (hành động dài đang xảy ra)'.".to_string()),
+        })?;
+
+        self.create_grammar(CreateGrammarReq {
+            session_id: s1.id,
+            title: "3. Hiện tại hoàn thành (Present Perfect)".to_string(),
+            structure: "S + have/has + V3/ed (Phủ định: have/has not + V3/ed)".to_string(),
+            explanation: "Diễn tả hành động xảy ra trong quá khứ và vẫn kéo dài đến hiện tại, hoặc kinh nghiệm từ trước tới nay (already, yet, just, ever, never, since, for).".to_string(),
+            examples: "+ She has worked as a software engineer for six years.\n- We haven't deployed the production build yet.\n? Have you ever visited Singapore?".to_string(),
+            tips: Some("Phân biệt: 'have gone to' (đã đi và chưa về) vs 'have been to' (đã từng đến và đã về).".to_string()),
+        })?;
+
+        self.create_grammar(CreateGrammarReq {
+            session_id: s1.id,
+            title: "4. Các thì Tương lai (Will vs Be Going To vs Future Perfect)".to_string(),
+            structure: "Will: S + will + V | Be going to: S + am/is/are going to + V | Tương lai hoàn thành: S + will have + V3/ed".to_string(),
+            explanation: "- Will: Quyết định tức thời tại thời điểm nói.\n- Be going to: Dự định có kế hoạch trước, hoặc dự đoán có bằng chứng cụ thể.\n- Tương lai hoàn thành: Hành động sẽ hoàn tất TRƯỚC một mốc thời gian tương lai.".to_string(),
+            examples: "+ By the end of this month, our team will have finished the entire project.\n+ Don't worry, I will give you a hand with those luggage.\n- Look at the timetable, the flight isn't going to take off on time.".to_string(),
+            tips: Some("Mệnh đề thời gian (when, as soon as, before) ở tương lai PHẢI chia ở Hiện tại đơn, KHÔNG dùng 'will'.".to_string()),
+        })?;
+
+        // --- BUỔI 2: MỆNH ĐỀ QUAN HỆ & RÚT GỌN MỆNH ĐỀ ---
+        let s2 = self.create_session(CreateSessionReq {
+            session_number: Some(2),
+            title: "Buổi 2: Mệnh đề quan hệ & Rút gọn mệnh đề (Relative Clauses)".to_string(),
+            date: Some(today.clone()),
+            teacher: Some("Ms. Sarah Jenkins".to_string()),
+            goals: Some("Thành thạo đại từ/trạng từ quan hệ (Who, Whom, Which, That, Whose...) và 3 quy tắc rút gọn mệnh đề đỉnh cao.".to_string()),
+            notes: Some("Tuyệt đối không dùng 'That' sau dấu phẩy (mệnh đề không xác định) và sau giới từ.".to_string()),
+        })?;
+
+        self.create_vocab(CreateVocabReq {
+            session_id: s2.id,
+            word: "comprehensive".to_string(),
+            ipa: Some("/ˌkɑːmprɪˈhensɪv/".to_string()),
+            pos: Some("adjective".to_string()),
+            meaning: "toàn diện, bao quát mọi khía cạnh".to_string(),
+            example_en: Some("The study provides a comprehensive overview of global climate patterns.".to_string()),
+            example_vi: Some("Nghiên cứu cung cấp một cái nhìn toàn diện về các mô hình khí hậu toàn cầu.".to_string()),
+            status: Some("mastered".to_string()),
+            notes: Some("Tránh nhầm với 'comprehensible' (dễ hiểu)".to_string()),
+        })?;
+
+        self.create_vocab(CreateVocabReq {
+            session_id: s2.id,
+            word: "indispensable".to_string(),
+            ipa: Some("/ˌɪndɪˈspensəbl/".to_string()),
+            pos: Some("adjective".to_string()),
+            meaning: "không thể thiếu được, thiết yếu".to_string(),
+            example_en: Some("Critical thinking is indispensable for academic success.".to_string()),
+            example_vi: Some("Tư duy phản biện là điều không thể thiếu cho thành công trong học tập.".to_string()),
+            status: Some("reviewing".to_string()),
+            notes: Some("Collocation: an indispensable tool / element".to_string()),
+        })?;
+
+        self.create_vocab(CreateVocabReq {
+            session_id: s2.id,
+            word: "facilitate".to_string(),
+            ipa: Some("/fəˈsɪlɪteɪt/".to_string()),
+            pos: Some("verb".to_string()),
+            meaning: "tạo điều kiện thuận lợi, hỗ trợ dễ dàng hơn".to_string(),
+            example_en: Some("The new digital tools facilitate collaboration among remote teams.".to_string()),
+            example_vi: Some("Các công cụ kỹ thuật số mới tạo điều kiện thuận lợi cho việc cộng tác giữa các đội nhóm từ xa.".to_string()),
+            status: Some("learning".to_string()),
+            notes: Some("Formal academic verb".to_string()),
+        })?;
+
+        self.create_grammar(CreateGrammarReq {
+            session_id: s2.id,
+            title: "1. Đại từ & Trạng từ quan hệ (Who, Whom, Which, That, Whose...)".to_string(),
+            structure: "Người: WHO + V / WHOM + S + V | Vật: WHICH/THAT + V/S+V | Sở hữu: N + WHOSE + N | Trạng từ: WHERE, WHEN, WHY".to_string(),
+            explanation: "Dùng để nối 2 câu đơn thành câu phức. Phân biệt mệnh đề xác định (không dấu phẩy) và không xác định (có dấu phẩy, KHÔNG dùng 'that').".to_string(),
+            examples: "+ The engineer who developed this application received the award.\n+ Dr. Harrison, whom we interviewed yesterday, has accepted the position.\n+ The company whose headquarters is in Tokyo announced a new strategy.".to_string(),
+            tips: Some("Sau dấu phẩy và sau giới từ (in, on, with...) TUYỆT ĐỐI KHÔNG DÙNG 'THAT'.".to_string()),
+        })?;
+
+        self.create_grammar(CreateGrammarReq {
+            session_id: s2.id,
+            title: "2. Rút gọn mệnh đề quan hệ (Reduced Relative Clauses)".to_string(),
+            structure: "1. Chủ động ➡️ V-ing | 2. Bị động ➡️ V3/ed | 3. Sau the first, last, only ➡️ To V".to_string(),
+            explanation: "Biến đổi giúp câu văn ngắn gọn, học thuật hơn:\n- Chủ động: The girl who is talking ➡️ The girl talking.\n- Bị động: The laptops which were manufactured ➡️ The laptops manufactured.\n- Sau first/only: The only person who passed ➡️ The only person to pass.".to_string(),
+            examples: "+ Active: Documents submitted after 5 PM will not be processed.\n+ Passive: The keynote address delivered by the CEO inspired everyone.\n+ To-V: She is the only candidate to achieve a perfect band score.".to_string(),
+            tips: Some("Luôn xác định xem danh từ phía trước là CHỦ THỂ (hành động ➡️ V-ing) hay ĐỐI TƯỢNG (bị tác động ➡️ V3/ed).".to_string()),
+        })?;
+
+        // --- BUỔI 3: QUY TẮC PHÁT ÂM ĐUÔI -ED ---
+        let s3 = self.create_session(CreateSessionReq {
+            session_number: Some(3),
+            title: "Buổi 3: Quy tắc phát âm đuôi -ED chuẩn quốc tế (/id/, /t/, /d/)".to_string(),
+            date: Some(today.clone()),
+            teacher: Some("Dr. Alexander Hayes".to_string()),
+            goals: Some("Nắm trọn vẹn 3 quy tắc phát âm đuôi -ED theo ngữ âm học quốc tế và danh sách tính từ ngoại lệ.".to_string()),
+            notes: Some("Ghi nhớ câu thần chú âm vô thanh: 'Chính Phủ Phát Sách Không Thèm / Thảo' để đọc đuôi /t/ chuẩn xác.".to_string()),
+        })?;
+
+        self.create_vocab(CreateVocabReq {
+            session_id: s3.id,
             word: "articulate".to_string(),
             ipa: Some("/ɑːrˈtɪkjuleɪt/".to_string()),
             pos: Some("verb / adjective".to_string()),
-            meaning: "diễn đạt gãy gọn, lưu loát / ăn nói rõ ràng".to_string(),
-            example_en: Some("She gave a witty, entertaining, and articulate presentation.".to_string()),
-            example_vi: Some("Cô ấy đã có một bài thuyết trình hóm hỉnh, cuốn hút và diễn đạt rất lưu loát.".to_string()),
+            meaning: "phát âm rõ ràng, diễn đạt lưu loát gãy gọn".to_string(),
+            example_en: Some("She gave an articulate and persuasive presentation yesterday.".to_string()),
+            example_vi: Some("Cô ấy đã có một bài thuyết trình lưu loát và đầy sức thuyết phục ngày hôm qua.".to_string()),
             status: Some("mastered".to_string()),
-            notes: Some("Thường đi với 'articulate an idea / opinion'".to_string()),
+            notes: Some("V: /ɑːrˈtɪkjuleɪt/ - Adj: /ɑːrˈtɪkjulət/".to_string()),
         })?;
 
         self.create_vocab(CreateVocabReq {
-            session_id: s1.id,
-            word: "compromise".to_string(),
-            ipa: Some("/ˈkɑːmprəmaɪz/".to_string()),
-            pos: Some("noun / verb".to_string()),
-            meaning: "sự thỏa hiệp, nhượng bộ lẫn nhau".to_string(),
-            example_en: Some("We reached a compromise after two hours of tough debate.".to_string()),
-            example_vi: Some("Chúng tôi đã đạt được thỏa hiệp sau hai giờ tranh luận căng thẳng.".to_string()),
+            session_id: s3.id,
+            word: "distinguish".to_string(),
+            ipa: Some("/dɪˈstɪŋɡwɪʃ/".to_string()),
+            pos: Some("verb".to_string()),
+            meaning: "phân biệt, nhận diện sự khác nhau".to_string(),
+            example_en: Some("Can you distinguish between voiceless and voiced consonants?".to_string()),
+            example_vi: Some("Bạn có thể phân biệt giữa phụ âm vô thanh và hữu thanh không?".to_string()),
             status: Some("learning".to_string()),
-            notes: Some("Collocation: reach/arrive at a compromise".to_string()),
+            notes: Some("Collocation: distinguish between A and B".to_string()),
         })?;
 
         self.create_vocab(CreateVocabReq {
-            session_id: s1.id,
-            word: "concession".to_string(),
-            ipa: Some("/kənˈseʃn/".to_string()),
+            session_id: s3.id,
+            word: "exception".to_string(),
+            ipa: Some("/ɪkˈsepʃn/".to_string()),
             pos: Some("noun".to_string()),
-            meaning: "sự nhượng bộ trong đàm phán".to_string(),
-            example_en: Some("Both parties made major concessions to secure the deal.".to_string()),
-            example_vi: Some("Cả hai bên đều đã có những nhượng bộ lớn để ký kết được hợp đồng.".to_string()),
-            status: Some("learning".to_string()),
-            notes: Some("Make a concession: nhượng bộ điều gì đó".to_string()),
+            meaning: "trường hợp ngoại lệ".to_string(),
+            example_en: Some("Words like 'naked' and 'wicked' are special exceptions in -ed pronunciation.".to_string()),
+            example_vi: Some("Các từ như 'naked' và 'wicked' là những ngoại lệ đặc biệt trong cách phát âm đuôi -ed.".to_string()),
+            status: Some("mastered".to_string()),
+            notes: Some("Idiom: With the exception of (= ngoại trừ)".to_string()),
         })?;
 
         self.create_grammar(CreateGrammarReq {
-            session_id: s1.id,
-            title: "Diplomatic Language (Ngôn ngữ ngoại giao / Giảm nhẹ)".to_string(),
-            structure: "Subject + seem / appear / tend + to V  |  I was wondering if... | Wouldn't it be better if...".to_string(),
-            explanation: "Sử dụng để giảm bớt sự gay gắt khi nêu ý kiến trái chiều hoặc chỉ trích đối tác trong môi trường công sở quốc tế.".to_string(),
-            examples: "Direct: 'Your price is too high.'\nDiplomatic: 'Your pricing seems to be slightly above our current budget constraints.'\nDirect: 'Send me the report now.'\nDiplomatic: 'I was wondering if you could possibly send over the report by 3 PM.'".to_string(),
-            tips: Some("Tránh dùng 'You must' hoặc 'You are wrong' trong đàm phán chuyên nghiệp.".to_string()),
+            session_id: s3.id,
+            title: "1. Ba quy tắc vàng phát âm đuôi -ED (/id/, /t/, /d/)".to_string(),
+            structure: "1. Đọc là /id/: sau âm /t/ và /d/\n2. Đọc là /t/: sau âm vô thanh (/p, k, f, s, ʃ, tʃ/)\n3. Đọc là /d/: các âm hữu thanh còn lại".to_string(),
+            explanation: "- Nhóm 1 (/id/): wanted, needed, decided, started, invited, landed.\n- Nhóm 2 (/t/): Âm vô thanh ('Chính Phủ Phát Sách Không Thèm / Thảo'): stopped, looked, laughed, washed, watched, fixed.\n- Nhóm 3 (/d/): Các âm hữu thanh (rung cổ họng): played, opened, lived, cleaned, called.".to_string(),
+            examples: "+ /id/: They decided to postpone the tournament until next week.\n+ /t/: He walked to the office, checked his email, and fixed the bug.\n+ /d/: She called her parents and explained the whole situation.".to_string(),
+            tips: Some("Nhìn vào ÂM CUỐI CÙNG được phát âm, KHÔNG nhìn vào chữ cái viết (ví dụ: 'laughed' tận cùng chữ gh nhưng phát âm là /f/ ➡️ đọc là /t/).".to_string()),
         })?;
 
-        let s2 = self.create_session(CreateSessionReq {
-            session_number: Some(2),
-            title: "Buổi 2: Conditional Sentences & Hypothetical Scenarios".to_string(),
+        self.create_grammar(CreateGrammarReq {
+            session_id: s3.id,
+            title: "2. Danh sách tính từ ngoại lệ bắt buộc phát âm là /id/".to_string(),
+            structure: "Danh sách từ đặc biệt: naked, wicked, learned, ragged, sacred, blessed, crooked...".to_string(),
+            explanation: "Khi các từ này đóng vai trò là TÍNH TỪ (Adjectives), đuôi -ed luôn phát âm là /id/ thay vì /t/ hay /d/ như quy tắc thông thường.".to_string(),
+            examples: "+ naked /ˈneɪkɪd/ (trần trụi, khỏa thân)\n+ wicked /ˈwɪkɪd/ (độc ác, xấu xa)\n+ learned /ˈlɜːnɪd/ (uyên bác, có học thức - e.g. a learned professor)\n+ ragged /ˈræɡɪd/ (rách rưới, tả tơi)\n+ sacred /ˈseɪkrɪd/ (thiêng liêng, trang trọng)\n+ blessed /ˈblesɪd/ (may mắn, thần thánh)\n+ crooked /ˈkrʊkɪd/ (quanh co, cong queo)".to_string(),
+            tips: Some("Trong bài thi trắc nghiệm phát âm THPTQG và TOEIC, các từ ngoại lệ này xuất hiện với tần suất trên 80%!".to_string()),
+        })?;
+
+        // --- BUỔI 4: QUY TẮC NỐI ÂM (CONNECTED SPEECH) ---
+        let s4 = self.create_session(CreateSessionReq {
+            session_number: Some(4),
+            title: "Buổi 4: Quy tắc đọc nối đuôi & Nói chuẩn ngữ điệu (Connected Speech)".to_string(),
             date: Some(today.clone()),
-            teacher: Some("Ms. Sarah Jenkins".to_string()),
-            goals: Some("Thành thạo câu điều kiện hỗn hợp (Mixed Conditionals) và cấu trúc Wish/If only.".to_string()),
-            notes: Some("Luyện tập phân biệt điều kiện loại 2 (hiện tại) và loại 3 (quá khứ).".to_string()),
+            teacher: Some("Coach Emma Watson".to_string()),
+            goals: Some("Làm chủ 4 quy tắc nối âm: Phụ âm - Nguyên âm, Nguyên âm - Nguyên âm, Biến âm (Assimilation) và Nuốt âm (Elision).".to_string()),
+            notes: Some("Luyện phát âm theo cụm luồng hơi liền mạch thay vì ngắt từng từ đơn lẻ.".to_string()),
         })?;
 
         self.create_vocab(CreateVocabReq {
-            session_id: s2.id,
-            word: "contingency".to_string(),
-            ipa: Some("/kənˈtɪndʒənsi/".to_string()),
+            session_id: s4.id,
+            word: "fluency".to_string(),
+            ipa: Some("/ˈfluːənsi/".to_string()),
             pos: Some("noun".to_string()),
-            meaning: "kế hoạch dự phòng, trường hợp khẩn cấp có thể xảy ra".to_string(),
-            example_en: Some("We need a contingency plan in case the supplier delays shipments.".to_string()),
-            example_vi: Some("Chúng ta cần một kế hoạch dự phòng đề phòng trường hợp nhà cung ứng chậm giao hàng.".to_string()),
+            meaning: "sự lưu loát, trôi chảy trong ngôn ngữ".to_string(),
+            example_en: Some("Linking sounds properly will significantly boost your speaking fluency.".to_string()),
+            example_vi: Some("Việc nối âm đúng cách sẽ nâng cao đáng kể sự trôi chảy khi bạn nói.".to_string()),
+            status: Some("mastered".to_string()),
+            notes: Some("Adjective: fluent".to_string()),
+        })?;
+
+        self.create_vocab(CreateVocabReq {
+            session_id: s4.id,
+            word: "intonation".to_string(),
+            ipa: Some("/ˌɪntəˈneɪʃn/".to_string()),
+            pos: Some("noun".to_string()),
+            meaning: "ngữ điệu lên xuống của câu nói".to_string(),
+            example_en: Some("Natural intonation helps listeners grasp your emotions and intentions.".to_string()),
+            example_vi: Some("Ngữ điệu tự nhiên giúp người nghe nắm bắt cảm xúc và chủ ý của bạn.".to_string()),
             status: Some("reviewing".to_string()),
-            notes: Some("Contingency plan = Plan B".to_string()),
+            notes: Some("Rising intonation (câu hỏi Yes/No) vs Falling intonation (câu trần thuật)".to_string()),
         })?;
 
         self.create_vocab(CreateVocabReq {
-            session_id: s2.id,
-            word: "hindsight".to_string(),
-            ipa: Some("/ˈhaɪndsaɪt/".to_string()),
-            pos: Some("noun".to_string()),
-            meaning: "sự suy xét lại sau khi sự việc đã xảy ra".to_string(),
-            example_en: Some("With hindsight, we should have invested in automated testing much sooner.".to_string()),
-            example_vi: Some("Nhìn lại quá khứ, đáng lẽ chúng ta nên đầu tư vào kiểm thử tự động sớm hơn.".to_string()),
+            session_id: s4.id,
+            word: "spontaneous".to_string(),
+            ipa: Some("/spɑːnˈteɪniəs/".to_string()),
+            pos: Some("adjective".to_string()),
+            meaning: "tự nhiên, bộc phát không cần chuẩn bị trước".to_string(),
+            example_en: Some("Daily practice makes your conversational responses more spontaneous.".to_string()),
+            example_vi: Some("Việc luyện tập mỗi ngày giúp phản xạ giao tiếp của bạn trở nên tự nhiên hơn.".to_string()),
             status: Some("learning".to_string()),
-            notes: Some("Idiom: 'With hindsight' hoặc 'In hindsight'".to_string()),
+            notes: Some("Adverb: spontaneously".to_string()),
         })?;
 
         self.create_grammar(CreateGrammarReq {
-            session_id: s2.id,
-            title: "Mixed Conditional: Past Action with Present Result".to_string(),
-            structure: "If + S + had + V3/ed (Quá khứ), S + would + V-inf (Hiện tại)".to_string(),
-            explanation: "Diễn tả một giả định trái ngược với quá khứ, dẫn đến một kết quả ảnh hưởng trực tiếp đến hiện tại.".to_string(),
-            examples: "+ If I had taken that training course last year, I would speak fluent English today.\n- If he hadn't missed the flight yesterday, he wouldn't be stuck at the airport now.\n? Would you have this high position today if you hadn't worked so hard?".to_string(),
-            tips: Some("Chú ý trạng từ thời gian: vế If có dấu hiệu quá khứ (yesterday, last year), vế chính có dấu hiệu hiện tại (now, today).".to_string()),
+            session_id: s4.id,
+            title: "1. Nối âm Phụ âm - Nguyên âm & Nguyên âm - Nguyên âm".to_string(),
+            structure: "Phụ âm + Nguyên âm: C + V ➡️ Nối dính | Nguyên âm + Nguyên âm: V + V ➡️ Chèn âm /j/ hoặc /w/".to_string(),
+            explanation: "1. Phụ âm nối nguyên âm (C+V): 'Hold on' ➡️ /həʊl-dɒn/, 'Turn off' ➡️ /tɜːn-nɒf/, 'An apple' ➡️ /ən-næpl/.\n2. Nguyên âm nối nguyên âm (V+V):\n   - Miệng dẹt (/i:, ɪ, eɪ, aɪ/) ➡️ Chèn âm /j/: 'I agree' ➡️ /aɪ-j-əˈɡriː/, 'See it' ➡️ /siː-j-ɪt/.\n   - Miệng tròn (/u:, əʊ, aʊ/) ➡️ Chèn âm /w/: 'Go out' ➡️ /ɡəʊ-w-aʊt/, 'You are' ➡️ /juː-w-ɑːr/.".to_string(),
+            examples: "+ C+V: Can I have a cup of water? ➡️ /kæn-aɪ hæv-ə kʌp-əv wɔːtər/\n+ V+V (/j/): She asked me to say it again. ➡️ /seɪ-j-ɪt/\n+ V+V (/w/): Let's do it right away. ➡️ /duː-w-ɪt/".to_string(),
+            tips: Some("Khi nói tiếng Anh, đừng cố phát âm rời rạc như gõ máy; hãy để luồng hơi nối trơn tru giữa các âm tiết.".to_string()),
+        })?;
+
+        self.create_grammar(CreateGrammarReq {
+            session_id: s4.id,
+            title: "2. Biến âm (Assimilation) & Nuốt âm (Elision) trong giao tiếp".to_string(),
+            structure: "/t/ + /j/ ➡️ /tʃ/ | /d/ + /j/ ➡️ /dʒ/ | Nuốt /t/, /d/ kẹt giữa 2 phụ âm".to_string(),
+            explanation: "1. Biến âm (Assimilation):\n   - /t/ gặp /j/: 'Nice to meet you' ➡️ /miːtʃu/, 'Don't you' ➡️ /dəʊntʃu/.\n   - /d/ gặp /j/: 'Did you' ➡️ /dɪdʒu/, 'Could you' ➡️ /kʊdʒu/.\n2. Nuốt âm (Elision): Bỏ hẳn âm /t/ hoặc /d/ khi kẹt giữa hai phụ âm khác:\n   - 'Last night' ➡️ /lɑːs naɪt/ (bỏ /t/)\n   - 'Next door' ➡️ /neks dɔːr/ (bỏ /t/)".to_string(),
+            examples: "+ Could you tell me what you need? ➡️ /kʊdʒu tel miː wʌtʃu niːd/\n+ I saw him last night next door. ➡️ /lɑːs naɪt neks dɔːr/\n+ Don't you want to come? ➡️ /dəʊntʃu wɒntə kʌm/".to_string(),
+            tips: Some("Nắm được quy tắc này bạn sẽ nghe hiểu người bản xứ khi họ nói nhanh (Fast Native Speech) mà không bị bỡ ngỡ.".to_string()),
         })?;
 
         Ok(())
