@@ -767,6 +767,7 @@ async function markCardStatus(newStatus) {
       body: JSON.stringify({ status: newStatus }),
     });
     v.status = newStatus;
+    broadcastRealtimeUpdate('STATUS_CHANGED');
     await loadStats();
     nextFlashcard();
   } catch (e) {
@@ -787,6 +788,7 @@ async function cycleVocabStatus(id, currentStatus) {
       method: 'PUT',
       body: JSON.stringify({ status: newStatus }),
     });
+    broadcastRealtimeUpdate('STATUS_CHANGED');
     await selectSession(state.currentSessionId);
   } catch (e) {
     alert('Lỗi cập nhật: ' + e.message);
@@ -870,6 +872,7 @@ el.btnDeleteSession.onclick = async () => {
   if (confirm('Bạn có chắc chắn muốn xóa buổi học này và toàn bộ từ vựng, ngữ pháp liên quan?')) {
     try {
       await api(`/api/sessions/${state.currentSessionId}`, { method: 'DELETE' });
+      broadcastRealtimeUpdate('SESSION_DELETED');
       state.currentSessionId = null;
       await loadSessions();
     } catch (e) {
@@ -909,6 +912,7 @@ el.btnSubmitSession.onclick = async (e) => {
       });
     }
     closeModal(el.modalSession);
+    broadcastRealtimeUpdate('SESSION_SAVED', { id: saved.id });
     await loadSessions(saved.id);
   } catch (err) {
     alert('Lỗi lưu buổi học: ' + err.message);
@@ -951,6 +955,7 @@ async function deleteVocab(id) {
   if (confirm('Xóa từ vựng này?')) {
     try {
       await api(`/api/vocabularies/${id}`, { method: 'DELETE' });
+      broadcastRealtimeUpdate('VOCAB_DELETED');
       await selectSession(state.currentSessionId);
     } catch (e) {
       alert('Lỗi xóa từ vựng: ' + e.message);
@@ -994,6 +999,7 @@ el.btnSubmitVocab.onclick = async (e) => {
       });
     }
     closeModal(el.modalVocab);
+    broadcastRealtimeUpdate('VOCAB_SAVED');
     await selectSession(state.currentSessionId);
   } catch (err) {
     alert('Lỗi lưu từ vựng: ' + err.message);
@@ -1030,6 +1036,7 @@ async function deleteGrammar(id) {
   if (confirm('Xóa điểm ngữ pháp này?')) {
     try {
       await api(`/api/grammars/${id}`, { method: 'DELETE' });
+      broadcastRealtimeUpdate('GRAMMAR_DELETED');
       await selectSession(state.currentSessionId);
     } catch (e) {
       alert('Lỗi xóa ngữ pháp: ' + e.message);
@@ -1072,6 +1079,7 @@ el.btnSubmitGrammar.onclick = async (e) => {
       });
     }
     closeModal(el.modalGrammar);
+    broadcastRealtimeUpdate('GRAMMAR_SAVED');
     await selectSession(state.currentSessionId);
   } catch (err) {
     alert('Lỗi lưu ngữ pháp: ' + err.message);
@@ -1227,6 +1235,7 @@ el.importFileInput.onchange = async (e) => {
           method: 'POST',
           body: JSON.stringify(data),
         });
+        broadcastRealtimeUpdate('BACKUP_IMPORTED');
         alert('Khôi phục dữ liệu thành công!');
         await loadSessions();
       }
@@ -1267,6 +1276,37 @@ function escapeJsString(str) {
   if (!str) return '';
   return String(str).replace(/'/g, "\\'").replace(/"/g, '\\"');
 }
+
+// Cross-Tab & Cross-Client Realtime Synchronizer
+const syncChannel = 'BroadcastChannel' in window ? new BroadcastChannel('enotes_realtime_sync') : null;
+
+function broadcastRealtimeUpdate(action, payload = {}) {
+  if (syncChannel) {
+    syncChannel.postMessage({ action, payload, time: Date.now() });
+  }
+}
+
+if (syncChannel) {
+  syncChannel.onmessage = (event) => {
+    // If another tab or window updated data, refresh current view seamlessly
+    console.log('[Realtime Sync] Received broadcast:', event.data);
+    loadSessions(state.currentSessionId);
+  };
+}
+
+// Fallback storage event for older browsers
+window.addEventListener('storage', (e) => {
+  if (e.key && e.key.startsWith('enotes_')) {
+    loadSessions(state.currentSessionId);
+  }
+});
+
+// Periodic background sync (every 5 seconds) to keep data in sync if running backend server
+setInterval(() => {
+  if (!useLocalStore && document.visibilityState === 'visible') {
+    loadStats();
+  }
+}, 5000);
 
 // Initialize Application
 loadSessions();
