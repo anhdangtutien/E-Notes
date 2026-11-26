@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>E-Notes — Sổ tay học tiếng Anh</title>
   <link rel="stylesheet" href="/style.css">
+  <!-- Google Identity Services SDK -->
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 <body>
   <div class="app-container">
@@ -14,6 +16,47 @@
         <div class="app-branding">
           <div class="brand-title">
             <span>E-Notes</span>
+          </div>
+        </div>
+
+        <!-- Google OAuth Profile / Login Section -->
+        <div class="auth-section" id="authSection">
+          <!-- Logged Out State -->
+          <div class="auth-logged-out" id="authLoggedOut">
+            <button class="btn-google-login" id="btnGoogleLogin" type="button">
+              <svg class="google-icon" width="16" height="16" viewBox="0 0 24 24">
+                <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.66-5.17 3.66-9.17z"/>
+                <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.26 21.36 7.36 24 12 24z"/>
+                <path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.25C.45 8.18 0 9.98 0 12s.45 3.82 1.25 5.42l4.03-3.15z"/>
+                <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.36 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98z"/>
+              </svg>
+              <span>Đăng nhập Google</span>
+            </button>
+            <button class="btn-oauth-settings" id="btnOAuthSettings" type="button" title="Cài đặt Google OAuth Client ID">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+            </button>
+          </div>
+
+          <!-- Logged In State -->
+          <div class="auth-logged-in" id="authLoggedIn" style="display: none;">
+            <div class="user-card">
+              <div class="user-avatar-wrap">
+                <img id="userAvatarImg" class="user-avatar-img" src="" alt="Avatar" style="display: none;">
+                <div id="userAvatarFallback" class="user-avatar-fallback">U</div>
+              </div>
+              <div class="user-info">
+                <div class="user-name-row">
+                  <span class="user-name" id="userNameDisplay">Người dùng</span>
+                  <span class="google-badge" title="Đã xác thực Google OAuth">
+                    <svg width="11" height="11" viewBox="0 0 24 24"><path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.66-5.17 3.66-9.17z"/><path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.26 21.36 7.36 24 12 24z"/><path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.25C.45 8.18 0 9.98 0 12s.45 3.82 1.25 5.42l4.03-3.15z"/><path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.36 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98z"/></svg>
+                  </span>
+                </div>
+                <div class="user-email" id="userEmailDisplay">user@gmail.com</div>
+              </div>
+              <button class="btn-logout" id="btnLogout" type="button" title="Đăng xuất khỏi Google">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+              </button>
+            </div>
           </div>
         </div>
 
@@ -341,6 +384,81 @@
       <div class="modal-footer">
         <button class="btn btn-secondary" data-close-modal>Hủy</button>
         <button class="btn btn-primary" id="btnSubmitGrammar">Lưu ngữ pháp</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Google OAuth & Settings -->
+  <div class="modal-overlay" id="modalGoogleAuth" style="display: none;">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3 class="modal-title" style="display: flex; align-items: center; gap: 8px;">
+          <svg width="20" height="20" viewBox="0 0 24 24">
+            <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.66-5.17 3.66-9.17z"/>
+            <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.26 21.36 7.36 24 12 24z"/>
+            <path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.25C.45 8.18 0 9.98 0 12s.45 3.82 1.25 5.42l4.03-3.15z"/>
+            <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.36 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98z"/>
+          </svg>
+          Đăng nhập Google OAuth 2.0
+        </h3>
+        <button class="modal-close" data-close-modal>&times;</button>
+      </div>
+      <div class="modal-body">
+        <!-- Google Official Button Container (Rendered by GIS SDK) -->
+        <div id="gisButtonWrapper" style="display: flex; flex-direction: column; align-items: center; margin: 8px 0 16px;">
+          <div id="googleSignInButtonSlot"></div>
+          <div id="gisHint" style="font-size: 11px; color: var(--text-muted); margin-top: 6px; display: none;">Bấm nút Google phía trên để đăng nhập tài khoản của bạn</div>
+        </div>
+
+        <div style="text-align: center; margin-bottom: 16px; color: var(--text-muted); font-size: 11px; position: relative;">
+          <span style="background: var(--bg-surface); padding: 0 10px; position: relative; z-index: 1;">HOẶC ĐĂNG NHẬP NHANH TRỰC TIẾP</span>
+          <div style="position: absolute; top: 50%; left: 0; right: 0; height: 1px; background: var(--border-subtle); z-index: 0;"></div>
+        </div>
+
+        <!-- Quick Demo Sign-in for immediate instant testing without setup -->
+        <div style="background: var(--bg-subtle); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 12px; margin-bottom: 16px;">
+          <div style="font-weight: 600; font-size: 13px; margin-bottom: 6px; display: flex; align-items: center; justify-content: space-between;">
+            <span>⚡ Đăng nhập một chạm</span>
+            <span style="font-size: 10px; background: #ECFDF5; color: #065F46; padding: 2px 6px; border-radius: 4px; border: 1px solid #A7F3D0; font-weight: 600;">Sử dụng ngay</span>
+          </div>
+          <p style="font-size: 12px; color: var(--text-secondary); margin-bottom: 10px;">
+            Nhập tên & email Google của bạn để đăng nhập ngay mà không cần chờ duyệt Google Cloud:
+          </p>
+          <div style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 10px;">
+            <input type="text" id="demoUserName" class="form-input" style="font-size: 12px; height: 34px;" value="Anh Đặng (Google User)" placeholder="Họ và tên của bạn...">
+            <div style="display: flex; gap: 8px;">
+              <input type="email" id="demoUserEmail" class="form-input" style="font-size: 12px; height: 34px; flex: 1;" value="anhdangtutien@gmail.com" placeholder="Email Google...">
+              <button type="button" class="btn btn-primary" id="btnQuickDemoLogin" style="white-space: nowrap; font-size: 12px; height: 34px;">
+                Đăng nhập
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Google Cloud OAuth Configuration Details -->
+        <div class="oauth-config-box" style="border: 1px dashed var(--border-strong); border-radius: var(--radius-md); padding: 12px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+            <label class="form-label" style="font-weight: 600; margin-bottom: 0;">Google OAuth Client ID</label>
+            <span style="font-size: 11px; color: var(--text-muted);">Dành cho dự án thực</span>
+          </div>
+          <div style="display: flex; gap: 8px; margin-bottom: 8px;">
+            <input type="text" id="inputGoogleClientId" class="form-input" placeholder="ví dụ: 123456789-abc.apps.googleusercontent.com" style="font-size: 11px; font-family: var(--font-mono); height: 34px; flex: 1;">
+            <button type="button" class="btn btn-secondary" id="btnSaveClientId" style="white-space: nowrap; font-size: 12px; height: 34px;">Lưu ID</button>
+          </div>
+          <div id="clientIdStatus" style="font-size: 11px; margin-bottom: 8px; display: none;"></div>
+          <div style="font-size: 11px; color: var(--text-secondary); line-height: 1.5; background: var(--bg-app); padding: 8px 10px; border-radius: var(--radius-sm);">
+            <strong>Cách lấy Google Client ID chính thức:</strong><br>
+            1. Vào <a href="https://console.cloud.google.com/apis/credentials" target="_blank" rel="noopener noreferrer" style="color: var(--accent-link); text-decoration: underline;">Google Cloud Console &rarr; Credentials</a>.<br>
+            2. Tạo <strong>OAuth client ID</strong> &rarr; Application type chọn <strong>Web application</strong>.<br>
+            3. Thêm <strong>Authorized JavaScript origins</strong>:<br>
+            &bull; <code>https://e-notes-kappa.vercel.app</code><br>
+            &bull; <code>http://localhost:8080</code><br>
+            4. Copy Client ID dán vào ô trên và bấm <strong>Lưu ID</strong>.
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" data-close-modal>Đóng</button>
       </div>
     </div>
   </div>

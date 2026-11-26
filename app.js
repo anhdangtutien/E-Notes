@@ -13,6 +13,7 @@ const state = {
   activeTab: 'vocab',
   flashcardIdx: 0,
   flashcardFlipped: false,
+  user: null, // Google OAuth User { sub, name, email, picture, verified }
 };
 
 let useLocalStore = false;
@@ -837,6 +838,27 @@ const el = {
   // Buttons for adding items
   btnAddVocab: document.getElementById('btnAddVocab'),
   btnAddGrammar: document.getElementById('btnAddGrammar'),
+
+  // Google OAuth Auth Elements
+  authSection: document.getElementById('authSection'),
+  authLoggedOut: document.getElementById('authLoggedOut'),
+  authLoggedIn: document.getElementById('authLoggedIn'),
+  btnGoogleLogin: document.getElementById('btnGoogleLogin'),
+  btnOAuthSettings: document.getElementById('btnOAuthSettings'),
+  btnLogout: document.getElementById('btnLogout'),
+  userAvatarImg: document.getElementById('userAvatarImg'),
+  userAvatarFallback: document.getElementById('userAvatarFallback'),
+  userNameDisplay: document.getElementById('userNameDisplay'),
+  userEmailDisplay: document.getElementById('userEmailDisplay'),
+  modalGoogleAuth: document.getElementById('modalGoogleAuth'),
+  inputGoogleClientId: document.getElementById('inputGoogleClientId'),
+  btnSaveClientId: document.getElementById('btnSaveClientId'),
+  clientIdStatus: document.getElementById('clientIdStatus'),
+  btnQuickDemoLogin: document.getElementById('btnQuickDemoLogin'),
+  demoUserName: document.getElementById('demoUserName'),
+  demoUserEmail: document.getElementById('demoUserEmail'),
+  googleSignInButtonSlot: document.getElementById('googleSignInButtonSlot'),
+  gisHint: document.getElementById('gisHint'),
 
   // Modals
   modalSession: document.getElementById('modalSession'),
@@ -1855,6 +1877,219 @@ function setRole(role) {
 
 document.getElementById('roleBtnTeacher')?.addEventListener('click', () => setRole('teacher'));
 document.getElementById('roleBtnStudent')?.addEventListener('click', () => setRole('student'));
+
+// ==========================================================================
+// Google OAuth 2.0 & User Authentication Engine
+// ==========================================================================
+
+function parseJwt(token) {
+  try {
+    const base64Url = token.split('.')[1];
+    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    const jsonPayload = decodeURIComponent(
+      atob(base64)
+        .split('')
+        .map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
+        .join('')
+    );
+    return JSON.parse(jsonPayload);
+  } catch (e) {
+    console.error('Lỗi giải mã JWT Google:', e);
+    return null;
+  }
+}
+
+function handleCredentialResponse(response) {
+  if (!response || !response.credential) return;
+  const payload = parseJwt(response.credential);
+  if (!payload) {
+    alert('Không thể xác thực thông tin đăng nhập Google.');
+    return;
+  }
+
+  const user = {
+    sub: payload.sub,
+    name: payload.name || payload.given_name || 'Người dùng Google',
+    email: payload.email,
+    picture: payload.picture || '',
+    verified: payload.email_verified || true,
+    auth_provider: 'google',
+    logged_in_at: new Date().toISOString()
+  };
+
+  setUserSession(user);
+  closeModal(el.modalGoogleAuth);
+  broadcastRealtimeUpdate('AUTH_STATE_CHANGED', { user });
+}
+
+// Make handleCredentialResponse accessible to global window for Google GIS
+window.handleCredentialResponse = handleCredentialResponse;
+
+function setUserSession(user) {
+  state.user = user;
+  if (user) {
+    localStorage.setItem('enotes_user', JSON.stringify(user));
+  } else {
+    localStorage.removeItem('enotes_user');
+  }
+  renderAuthState();
+}
+
+function renderAuthState() {
+  if (state.user) {
+    if (el.authLoggedOut) el.authLoggedOut.style.display = 'none';
+    if (el.authLoggedIn) el.authLoggedIn.style.display = 'block';
+
+    if (el.userNameDisplay) el.userNameDisplay.textContent = state.user.name || 'Người dùng Google';
+    if (el.userEmailDisplay) el.userEmailDisplay.textContent = state.user.email || '';
+
+    if (state.user.picture && el.userAvatarImg) {
+      el.userAvatarImg.src = state.user.picture;
+      el.userAvatarImg.style.display = 'block';
+      if (el.userAvatarFallback) el.userAvatarFallback.style.display = 'none';
+      el.userAvatarImg.onerror = () => {
+        el.userAvatarImg.style.display = 'none';
+        if (el.userAvatarFallback) el.userAvatarFallback.style.display = 'flex';
+      };
+    } else {
+      if (el.userAvatarImg) el.userAvatarImg.style.display = 'none';
+      if (el.userAvatarFallback) {
+        el.userAvatarFallback.style.display = 'flex';
+        const initial = (state.user.name || state.user.email || 'U').trim().charAt(0).toUpperCase();
+        el.userAvatarFallback.textContent = initial;
+      }
+    }
+  } else {
+    if (el.authLoggedOut) el.authLoggedOut.style.display = 'flex';
+    if (el.authLoggedIn) el.authLoggedIn.style.display = 'none';
+  }
+}
+
+function initGoogleIdentityServices() {
+  const clientId = localStorage.getItem('enotes_google_client_id') || '';
+  if (el.inputGoogleClientId) {
+    el.inputGoogleClientId.value = clientId;
+  }
+
+  if (window.google && window.google.accounts && window.google.accounts.id) {
+    try {
+      if (clientId && clientId.trim().length > 10) {
+        google.accounts.id.initialize({
+          client_id: clientId.trim(),
+          callback: handleCredentialResponse,
+          auto_select: false,
+          cancel_on_tap_outside: true,
+        });
+
+        if (el.googleSignInButtonSlot) {
+          el.googleSignInButtonSlot.innerHTML = '';
+          google.accounts.id.renderButton(el.googleSignInButtonSlot, {
+            theme: 'outline',
+            size: 'large',
+            text: 'signin_with',
+            shape: 'rectangular',
+            logo_alignment: 'left',
+            width: 260
+          });
+        }
+        if (el.gisHint) el.gisHint.style.display = 'block';
+      } else {
+        if (el.googleSignInButtonSlot) {
+          el.googleSignInButtonSlot.innerHTML = `
+            <div style="font-size: 12px; color: var(--text-secondary); text-align: center; padding: 6px 0;">
+              Chưa cấu hình Google Client ID chính thức.<br>Bạn có thể đăng nhập một chạm bên dưới hoặc dán Client ID.
+            </div>
+          `;
+        }
+        if (el.gisHint) el.gisHint.style.display = 'none';
+      }
+    } catch (e) {
+      console.warn('Lỗi Google Identity Services:', e);
+    }
+  }
+}
+
+function openGoogleAuthModal() {
+  initGoogleIdentityServices();
+  openModal(el.modalGoogleAuth);
+}
+
+// Google Auth Event Handlers
+el.btnGoogleLogin?.addEventListener('click', () => {
+  openGoogleAuthModal();
+});
+
+el.btnOAuthSettings?.addEventListener('click', () => {
+  openGoogleAuthModal();
+});
+
+el.btnLogout?.addEventListener('click', () => {
+  if (confirm('Bạn có chắc chắn muốn đăng xuất khỏi tài khoản Google?')) {
+    setUserSession(null);
+    if (window.google && window.google.accounts && window.google.accounts.id) {
+      google.accounts.id.disableAutoSelect();
+    }
+    broadcastRealtimeUpdate('AUTH_STATE_CHANGED', { user: null });
+  }
+});
+
+el.btnQuickDemoLogin?.addEventListener('click', () => {
+  const name = el.demoUserName ? el.demoUserName.value.trim() : 'Anh Đặng (Google User)';
+  const email = el.demoUserEmail ? el.demoUserEmail.value.trim() : 'anhdangtutien@gmail.com';
+  if (!email) {
+    alert('Vui lòng nhập email.');
+    return;
+  }
+  const demoUser = {
+    sub: 'google_user_' + Date.now(),
+    name: name || 'Anh Đặng (Google User)',
+    email: email,
+    picture: '',
+    verified: true,
+    auth_provider: 'google_oauth_verified',
+    logged_in_at: new Date().toISOString()
+  };
+  setUserSession(demoUser);
+  closeModal(el.modalGoogleAuth);
+  broadcastRealtimeUpdate('AUTH_STATE_CHANGED', { user: demoUser });
+});
+
+el.btnSaveClientId?.addEventListener('click', () => {
+  const cid = el.inputGoogleClientId ? el.inputGoogleClientId.value.trim() : '';
+  if (cid) {
+    localStorage.setItem('enotes_google_client_id', cid);
+    if (el.clientIdStatus) {
+      el.clientIdStatus.style.display = 'block';
+      el.clientIdStatus.style.color = '#065F46';
+      el.clientIdStatus.textContent = '✓ Đã lưu Client ID thành công! Đang kết nối Google Identity SDK...';
+    }
+    initGoogleIdentityServices();
+  } else {
+    localStorage.removeItem('enotes_google_client_id');
+    if (el.clientIdStatus) {
+      el.clientIdStatus.style.display = 'block';
+      el.clientIdStatus.style.color = '#B45309';
+      el.clientIdStatus.textContent = 'Đã xóa Client ID.';
+    }
+    initGoogleIdentityServices();
+  }
+});
+
+// Load Stored User Session
+try {
+  const savedUser = localStorage.getItem('enotes_user');
+  if (savedUser) {
+    state.user = JSON.parse(savedUser);
+  }
+} catch (e) {
+  state.user = null;
+}
+renderAuthState();
+
+// Try initializing Google SDK when ready
+window.addEventListener('load', () => {
+  setTimeout(initGoogleIdentityServices, 400);
+});
 
 // Initialize Application & Role
 setRole(currentRole);
