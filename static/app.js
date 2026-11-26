@@ -1180,7 +1180,7 @@ async function lookupWordApi(word) {
   if (statusEl) {
     statusEl.style.display = 'block';
     statusEl.style.color = 'var(--text-secondary)';
-    statusEl.textContent = '⏳ Đang kết nối Free Dictionary API & dịch tự động...';
+    statusEl.textContent = '⏳ Đang tra cứu từ điển & dịch nghĩa...';
   }
 
   try {
